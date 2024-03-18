@@ -13,6 +13,11 @@
     --background-danger: #f87171;
     --background-overlay: #706e6e1e;
 
+    /* Contrast colors */
+    --background-contrast: #1b1a1a;
+    --background-contrast-hover: #2b2929;
+    --text-contrast: #fffafa;
+
     /* Texts */
     --text-1: #1f1c1c;
     --text-2: #575757dd;
@@ -34,6 +39,11 @@
     --background-hover-2: #9493931a;
     --background-danger: #dc2626;
     --background-overlay: #706e6e1e;
+
+    /* Contrast colors */
+    --background-contrast: #f7f5f2;
+    --background-contrast-hover: #e2e2e2;
+    --text-contrast: #1f1c1c;
 
     /* Texts */
     --text-1: #fffafa;
