@@ -2,32 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    /* Backgroundd */
+    --background-1: #fcfcfa;
+    --background-2: #fafafa;
+    --background-3: #ffffff;
+    --background-hover-1: #dddbdb1a;
+    --background-hover-2: #9493931a;
+    --background-danger: #f87171;
+    --background-overlay: #706e6e1e;
+
+    /* Texts */
+    --text-1: #1f1c1c;
+    --text-2: #575757dd;
+    --text-hover: #2b2828;
+    --text-danger: #ef4444;
+
+    /* Extra */
+    --border: #e5e5e5;
+    --special: #ff9a27;
+    --radius: 0.5rem;
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  .dark {
+    /* Backgroundd */
+    --background-1: #191919;
+    --background-2: #131212;
+    --background-3: #313030;
+    --background-hover-1: #dddbdb1a;
+    --background-hover-2: #9493931a;
+    --background-danger: #dc2626;
+    --background-overlay: #706e6e1e;
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+    /* Texts */
+    --text-1: #fffafa;
+    --text-2: #ffffffd1;
+    --text-hover: #ffffff;
+    --text-danger: #ef4444;
+
+    /* Extra */
+    --border: #353434;
+    --special: #ff9a27;
+    --radius: 0.5rem;
   }
 }
