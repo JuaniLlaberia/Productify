@@ -4,7 +4,7 @@ import GitlabAuthBtn from '@/components/auth/GitlabAuthBtn';
 import GoogleAuthBtn from '@/components/auth/GoogleAuthBtn';
 import Logo from '@/components/ui/logo';
 
-const SignUpPage = async () => {
+const SignInPage = async () => {
   return (
     <main className='h-full flex flex-col justify-center items-center bg-background-2 p-3'>
       <header className='absolute top-2 left-6'>
@@ -12,7 +12,7 @@ const SignUpPage = async () => {
       </header>
       <section className='w-full md:w-[400px] flex flex-col gap-2 p-5'>
         <h1 className='text-3xl lg:text-4xl font-semibold text-center text-text-1 mb-6 lg:mb-8'>
-          Get started with Productify
+          Log in to Productify
         </h1>
         <GoogleAuthBtn />
         <GithubAuthBtn />
@@ -20,12 +20,12 @@ const SignUpPage = async () => {
       </section>
       <footer>
         <p className='text-text-2 text-sm mt-1'>
-          Have an account?{' '}
+          Don't have an account?{' '}
           <Link
             className='font-semibold underline text-text-1'
-            href='/sign-in'
+            href='/sign-up'
           >
-            Sign In
+            Sign Up
           </Link>
         </p>
       </footer>
@@ -37,4 +37,4 @@ const SignUpPage = async () => {
   );
 };
 
-export default SignUpPage;
+export default SignInPage;
