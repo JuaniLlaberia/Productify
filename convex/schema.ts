@@ -16,8 +16,8 @@ export default defineSchema({
       v.literal('mantainance')
     ),
     image: v.optional(v.string()),
-    admins: v.optional(v.array(v.id('users'))),
     createdBy: v.id('users'),
+    members: v.array(v.id('users')),
     updatedAt: v.number(),
   }),
 
@@ -33,7 +33,7 @@ export default defineSchema({
     tag: v.union(
       v.literal('feature'),
       v.literal('fix'),
-      v.literal('text'),
+      v.literal('test'),
       v.literal('refactor'),
       v.literal('deploy')
     ),
@@ -76,10 +76,4 @@ export default defineSchema({
     reference: v.string(),
     isPinned: v.boolean(),
   }).index('by_projectId_pinned', ['projectId', 'isPinned']),
-
-  project_members: defineTable({
-    projectId: v.id('projects'),
-    userId: v.id('users'),
-    role: v.union(v.literal('admin'), v.literal('member')),
-  }),
 });
