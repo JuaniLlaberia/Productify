@@ -16,7 +16,7 @@ import {
 } from './ui/dropdown-menu';
 
 const ThemeMenu = () => {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   return (
     <DropdownMenuSub>
@@ -25,15 +25,24 @@ const ThemeMenu = () => {
         <span>Theme</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem
+          className={`${theme === 'light' ? 'bg-background-hover-2' : ''}`}
+          onClick={() => setTheme('light')}
+        >
           <HiOutlineSun className='mr-2 h-4 w-4' />
           <span>Light</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
+        <DropdownMenuItem
+          className={`${theme === 'dark' ? 'bg-background-hover-2' : ''}`}
+          onClick={() => setTheme('dark')}
+        >
           <HiOutlineMoon className='mr-2 h-4 w-4' />
           <span>Dark</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        <DropdownMenuItem
+          className={`${theme === 'system' ? 'bg-background-hover-2' : ''}`}
+          onClick={() => setTheme('system')}
+        >
           <HiOutlineComputerDesktop className='mr-2 h-4 w-4' />
           <span>System</span>
         </DropdownMenuItem>

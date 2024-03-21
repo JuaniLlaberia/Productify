@@ -24,24 +24,28 @@ import ThemeMenu from './ThemeMenu';
 
 type UserMenuType = {
   email: string;
+  withText?: boolean;
 };
 
-const UserMenu = ({ email }: UserMenuType) => {
+const UserMenu = ({ email, withText = true }: UserMenuType) => {
   const userData = useQuery(api.users.getUserByEmail, { email });
 
-  if (!userData) return <Skeleton className='w-full h-12' />;
+  if (!userData)
+    return <Skeleton className={`${withText ? 'w-full h-12' : ''}`} />;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='flex items-center gap-2.5 hover:bg-background-hover-2 p-1 rounded-lg transition-colors'>
-        <Avatar>
+        <Avatar className={`${!withText ? 'size-8' : ''}`}>
           <AvatarImage src={userData?.profileImg} />
           <AvatarFallback>{userData?.name.at(0)}</AvatarFallback>
         </Avatar>
-        <div className='text-start'>
-          <h3 className='text-sm text-text-1'>{userData?.name}</h3>
-          <p className='text-xs text-text-2'>{userData?.email}</p>
-        </div>
+        {withText && (
+          <div className='text-start'>
+            <h3 className='text-sm text-text-1'>{userData?.name}</h3>
+            <p className='text-xs text-text-2'>{userData?.email}</p>
+          </div>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent isProfile>
         <DropdownMenuLabel>Account</DropdownMenuLabel>
