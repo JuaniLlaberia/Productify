@@ -1,4 +1,5 @@
 import { HiOutlinePlus } from 'react-icons/hi2';
+import { getServerSession } from 'next-auth';
 
 import TasksBoard from './tasks-board';
 import TaskForm from './create-task-form';
@@ -12,7 +13,13 @@ import {
 } from '@/components/ui/sheet';
 import { Id } from '../../../../../convex/_generated/dataModel';
 
-export const TasksPage = ({ params }: { params: { projectId: string } }) => {
+export const TasksPage = async ({
+  params,
+}: {
+  params: { projectId: string };
+}) => {
+  const session = await getServerSession();
+
   return (
     <>
       <header className='w-full flex items-center justify-between sticky left-0 mb-4'>
@@ -38,7 +45,10 @@ export const TasksPage = ({ params }: { params: { projectId: string } }) => {
           </SheetContent>
         </Sheet>
       </header>
-      <TasksBoard projectId={params.projectId} />
+      <TasksBoard
+        projectId={params.projectId as Id<'projects'>}
+        email={session?.user?.email!}
+      />
     </>
   );
 };

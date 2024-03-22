@@ -6,7 +6,7 @@ import {
   HiOutlineUser,
 } from 'react-icons/hi2';
 
-import FormBtn from '@/components/FromBtn';
+import FormBtn from '@/components/form-btn';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

@@ -7,8 +7,17 @@ import { api } from '../../../../../convex/_generated/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Id } from '../../../../../convex/_generated/dataModel';
 
-const TasksBoard = ({ projectId }: { projectId: string }) => {
-  const tasks = useQuery(api.projects.getTasks);
+const TasksBoard = ({
+  projectId,
+  email,
+}: {
+  projectId: Id<'projects'>;
+  email: string;
+}) => {
+  const tasks = useQuery(api.projects.getTasks, {
+    projectId,
+    userEmail: email,
+  });
 
   if (!tasks)
     return (
@@ -20,7 +29,7 @@ const TasksBoard = ({ projectId }: { projectId: string }) => {
     );
 
   return (
-    <ul className='flex w-full items-start gap-3 pr-4'>
+    <ul className='flex w-full items-start gap-4 pr-4'>
       <TasksColumn
         projectId={projectId as Id<'projects'>}
         status='pending'

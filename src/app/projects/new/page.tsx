@@ -1,4 +1,4 @@
-import NewProjectForm from '@/components/NewProjectForm';
+import NewProjectForm from '@/app/projects/new-project-form';
 import Link from 'next/link';
 
 const NewProjectPage = () => {
