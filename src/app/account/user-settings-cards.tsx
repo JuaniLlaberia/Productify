@@ -2,15 +2,21 @@
 
 import { useQuery } from 'convex/react';
 
-import UserSettingsCard from './UserSettingsCard';
-import { api } from '../../convex/_generated/api';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Label } from './ui/label';
+import { api } from '../../../convex/_generated/api';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '../../components/ui/avatar';
+import { Label } from '../../components/ui/label';
+import UserSettingsCard from './user-settings-card';
 
 const UserSettingsCards = ({ email }: { email: string }) => {
   const userData = useQuery(api.users.getUserByEmail, { email });
+
+  console.log(userData);
 
   return (
     <ul className='flex flex-col gap-4 p-3'>
@@ -21,7 +27,7 @@ const UserSettingsCards = ({ email }: { email: string }) => {
           <>
             <Input
               className='bg-background-2'
-              defaultValue={userData?.name}
+              value={userData?.name}
               type='text'
               placeholder='John Doe'
             />

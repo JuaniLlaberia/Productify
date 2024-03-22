@@ -1,8 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { HiOutlineBell } from 'react-icons/hi2';
 
-import UserMenu from './UserMenu';
-import NavLink from './NavLink';
+import UserMenu from '../../../components/user-menu';
+import NavLink from '../../../components/nav-link';
 
 const SidebarFooter = async () => {
   const session = await getServerSession();

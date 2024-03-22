@@ -2,13 +2,17 @@
 
 import { useFormState } from 'react-dom';
 
-import FromBtn from './FromBtn';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { createProject } from '@/lib/actions';
+import FromBtn from '../../components/form-btn';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { State, createProject } from '@/lib/actions';
+
+const defaultDate: State = {
+  message: '',
+};
 
 const NewProjectForm = () => {
-  const [errorMessage, action] = useFormState(createProject, undefined);
+  const [errorMessage, action] = useFormState(createProject, defaultDate);
 
   return (
     <form

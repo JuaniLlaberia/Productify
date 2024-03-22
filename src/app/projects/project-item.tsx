@@ -1,19 +1,19 @@
 import { HiOutlineCog6Tooth, HiOutlineEllipsisVertical } from 'react-icons/hi2';
 import Link from 'next/link';
 
-import { Button } from './ui/button';
+import { Button } from '../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { Doc } from '../../convex/_generated/dataModel';
+} from '../../components/ui/dropdown-menu';
+import { Doc } from '../../../convex/_generated/dataModel';
 import { formatDateDistance } from '@/utils/formatDate';
-import Badge from './ui/badge';
+import Badge from '../../components/ui/badge';
 
 const ProjectItem = (project: Doc<'projects'>) => {
-  const { _id, updatedAt, name, status, members } = project;
+  const { _id, updatedAt, name, status } = project;
 
   return (
     <li>
@@ -26,7 +26,7 @@ const ProjectItem = (project: Doc<'projects'>) => {
           <h2 className='font-semibold text-text-1'>{name}</h2>
           <div className='flex items-center mt-1.5 mb-3'>
             <Badge
-              text={`${members.length} members`}
+              text='0 members'
               color='gray'
             />
             <Badge

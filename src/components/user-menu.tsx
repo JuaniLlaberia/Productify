@@ -20,7 +20,7 @@ import {
 } from './ui/dropdown-menu';
 import { api } from '../../convex/_generated/api';
 import { Skeleton } from './ui/skeleton';
-import ThemeMenu from './ThemeMenu';
+import ThemeMenu from './theme-menu';
 
 type UserMenuType = {
   email: string;

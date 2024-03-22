@@ -8,8 +8,8 @@ import {
   HiOutlineUsers,
 } from 'react-icons/hi2';
 
-import SidebarFooter from './SidebarFooter';
-import NavLink from './NavLink';
+import SidebarFooter from './sidebar-footer';
+import NavLink from '../../../components/nav-link';
 
 const links = [
   {
@@ -51,8 +51,9 @@ const links = [
 
 const Sidebar = () => {
   return (
-    <aside className='bg-background-3 dark:bg-background-2 border-r border-border-1 w-[250px]'>
-      <nav className='h-full flex flex-col '>
+    <aside className='relative bg-background-3 dark:bg-background-2 border-r border-border-1 w-[250px]'>
+      <button className='absolute top-0 -right-10'>Open</button>
+      <nav className='h-full flex flex-col'>
         <section className='flex-1 p-3'>
           <ul className='flex flex-col gap-1'>
             {links.map(link => (
