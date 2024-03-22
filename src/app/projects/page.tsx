@@ -1,32 +1,21 @@
 import Link from 'next/link';
 import { fetchQuery } from 'convex/nextjs';
+import { HiOutlinePlus } from 'react-icons/hi2';
 import { getServerSession } from 'next-auth';
-import { HiOutlineBell, HiOutlinePlus } from 'react-icons/hi2';
 
-import UserMenu from '@/components/UserMenu';
-import { Button } from '@/components/ui/button';
+import ProjectItem from '@/app/projects/project-item';
+import NavbarProjects from '@/app/projects/[projectId]/navbar-projects';
 import { api } from '../../../convex/_generated/api';
-
-import ProjectItem from '@/components/ProjectItem';
 
 const ProjectsPage = async () => {
   const session = await getServerSession();
-  const projects = await fetchQuery(api.projects.getUserProjects);
+  const projects = await fetchQuery(api.projects.getUserProjects, {
+    userEmail: session?.user?.email!,
+  });
 
   return (
     <main>
-      <nav className='flex items-center justify-end gap-3 p-3'>
-        <Button
-          variant='ghost'
-          size='icon'
-        >
-          <HiOutlineBell size={24} />
-        </Button>
-        <UserMenu
-          email={session?.user?.email!}
-          withText={false}
-        />
-      </nav>
+      <NavbarProjects />
       <header className='flex items-center justify-between p-2 px-3 my-3'>
         <h1 className='text-2xl text-text-1 font-semibold'>
           Projects ({projects?.length})
