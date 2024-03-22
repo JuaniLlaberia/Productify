@@ -17,7 +17,6 @@ export default defineSchema({
     ),
     image: v.optional(v.string()),
     createdBy: v.id('users'),
-    members: v.array(v.id('users')),
     updatedAt: v.number(),
   }),
 
@@ -76,4 +75,13 @@ export default defineSchema({
     reference: v.string(),
     isPinned: v.boolean(),
   }).index('by_projectId_pinned', ['projectId', 'isPinned']),
+
+  project_members: defineTable({
+    projectId: v.id('projects'),
+    userId: v.id('users'),
+    role: v.union(v.literal('owner'), v.literal('admin'), v.literal('member')),
+  })
+    .index('by_projectId_and_userId', ['projectId', 'userId'])
+    .index('by_projectId', ['projectId'])
+    .index('by_userId', ['userId']),
 });
