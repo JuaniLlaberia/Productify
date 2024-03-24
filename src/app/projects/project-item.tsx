@@ -1,6 +1,7 @@
 import { HiOutlineCog6Tooth, HiOutlineEllipsisVertical } from 'react-icons/hi2';
 import Link from 'next/link';
 
+import Badge from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import {
   DropdownMenu,
@@ -10,10 +11,17 @@ import {
 } from '../../components/ui/dropdown-menu';
 import { Doc } from '../../../convex/_generated/dataModel';
 import { formatDateDistance } from '@/utils/formatDate';
-import Badge from '../../components/ui/badge';
 
-const ProjectItem = (project: Doc<'projects'>) => {
-  const { _id, updatedAt, name, status } = project;
+export type ExtendedDoc = Doc<'projects'> & {
+  role: 'owner' | 'admin' | 'member';
+};
+
+type PageItemType = {
+  project: ExtendedDoc;
+};
+
+const ProjectItem = ({ project }: PageItemType) => {
+  const { _id, updatedAt, name, status, role } = project;
 
   return (
     <li>
@@ -26,8 +34,8 @@ const ProjectItem = (project: Doc<'projects'>) => {
           <h2 className='font-semibold text-text-1'>{name}</h2>
           <div className='flex items-center mt-1.5 mb-3'>
             <Badge
-              text='0 members'
-              color='gray'
+              text={role}
+              color={role === 'owner' ? 'red' : 'gray'}
             />
             <Badge
               text={status}

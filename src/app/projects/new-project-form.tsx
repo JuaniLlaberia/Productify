@@ -5,7 +5,7 @@ import { useFormState } from 'react-dom';
 import FromBtn from '../../components/form-btn';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { State, createProject } from '@/lib/actions';
+import { State, createProject } from '@/lib/actions/projects-actions';
 
 const defaultDate: State = {
   message: '',

@@ -8,7 +8,7 @@ export default function ProjectsLayout({
 }>) {
   return (
     <main className='flex h-full'>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <section className='w-full flex flex-col flex-1 max-h-screen overflow-y-auto overflow-x-hidden'>
         <NavbarProjects />
         <div
