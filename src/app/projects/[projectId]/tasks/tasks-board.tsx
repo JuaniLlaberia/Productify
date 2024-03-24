@@ -14,7 +14,7 @@ const TasksBoard = ({
   projectId: Id<'projects'>;
   email: string;
 }) => {
-  const tasks = useQuery(api.projects.getTasks, {
+  const tasks = useQuery(api.tasks.getTasks, {
     projectId,
     userEmail: email,
   });
