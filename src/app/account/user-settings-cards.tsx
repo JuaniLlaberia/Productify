@@ -2,6 +2,9 @@
 
 import { useQuery } from 'convex/react';
 
+import DeleteUserModal from './delete-user-modal';
+import SettingsCard from './settings-card';
+import FormBtn from '@/components/form-btn';
 import { api } from '../../../convex/_generated/api';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -11,34 +14,32 @@ import {
   AvatarImage,
 } from '../../components/ui/avatar';
 import { Label } from '../../components/ui/label';
-import UserSettingsCard from './user-settings-card';
+import { updateUser } from '@/lib/actions/user-actions';
 
-const UserSettingsCards = ({ email }: { email: string }) => {
+const SettingsCards = ({ email }: { email: string }) => {
   const userData = useQuery(api.users.getUserByEmail, { email });
-
-  console.log(userData);
 
   return (
     <ul className='flex flex-col gap-4 p-3'>
-      <UserSettingsCard
+      <SettingsCard
         title='Full Name'
         description='Please enter your full name that everyone is able to see.'
         formChild={
-          <>
+          <form action={updateUser}>
             <Input
+              name='name'
               className='bg-background-2'
-              value={userData?.name}
+              defaultValue={userData?.name}
               type='text'
               placeholder='John Doe'
             />
             <div className='flex items-center justify-end mt-2'>
-              <Button size='sm'>Save</Button>
+              <FormBtn size='sm'>Save</FormBtn>
             </div>
-          </>
+          </form>
         }
-        action={''}
       />
-      <UserSettingsCard
+      <SettingsCard
         title='Email'
         description={`The email address linked with your verification methods. It can't be
         modify.`}
@@ -61,52 +62,47 @@ const UserSettingsCards = ({ email }: { email: string }) => {
             </div>
           </>
         }
-        action={''}
       />
-      <UserSettingsCard
+      <SettingsCard
         title='Avatar'
         description='Upload a custom image or emoji from your files.'
         formChild={
-          <>
-            <Label
-              htmlFor='profileImg'
-              className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
-            >
-              <Avatar className='size-14'>
-                <AvatarImage src={userData?.profileImg} />
-                <AvatarFallback>{userData?.name.at(0)}</AvatarFallback>
-              </Avatar>
-              Choose image
-            </Label>
-            <Input
-              className='hidden'
-              type='file'
-              id='profileImg'
-              name='profileImg'
-            />
-          </>
+          <form
+            action={updateUser}
+            className='flex items-center justify-between'
+          >
+            <div>
+              <Label
+                htmlFor='profileImg'
+                className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
+              >
+                <Avatar className='size-14'>
+                  <AvatarImage src={userData?.profileImg} />
+                  <AvatarFallback>{userData?.name.at(0)}</AvatarFallback>
+                </Avatar>
+                Choose image
+              </Label>
+              <Input
+                className='hidden'
+                type='file'
+                accept='image/*'
+                id='profileImg'
+                name='profileImg'
+              />
+            </div>
+            <FormBtn size='sm'>Upload</FormBtn>
+          </form>
         }
-        action={''}
       />
-      <UserSettingsCard
+      <SettingsCard
         title='Delete Account'
         description='Permanently remove your account and all of its data from Profuctify.
         This action is not reversible.'
         danger
-        formChild={
-          <div className='flex items-center justify-end mt-5'>
-            <Button
-              variant='destructive'
-              size='sm'
-            >
-              Delete Account
-            </Button>
-          </div>
-        }
-        action={''}
+        formChild={<DeleteUserModal userEmail={userData?.email!} />}
       />
     </ul>
   );
 };
 
-export default UserSettingsCards;
+export default SettingsCards;
