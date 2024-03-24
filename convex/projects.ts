@@ -41,6 +41,28 @@ export const accessToProject = async (
   return user;
 };
 
+export const adminOnly = async (
+  ctx: QueryCtx | MutationCtx,
+  projectId: Id<'projects'>,
+  userEmail: string
+) => {
+  //Find and validate user
+  const user = await isAuth(ctx, userEmail);
+
+  if (!user) return null;
+
+  const userRole = await ctx.db
+    .query('project_members')
+    .withIndex('by_projectId_and_userId', q =>
+      q.eq('projectId', projectId).eq('userId', user._id)
+    )
+    .first();
+
+  if (userRole?.role === 'member') return null;
+
+  return { ...user, role: userRole?.role };
+};
+
 //Convex functions
 export const getUserProjects = query({
   args: { userEmail: v.string() },
@@ -55,10 +77,31 @@ export const getUserProjects = query({
       .collect();
 
     const projects = await Promise.all(
-      userProjects.map(project => ctx.db.get(project.projectId))
+      userProjects.map(async project => {
+        const projectData = await ctx.db.get(project.projectId);
+        return {
+          ...projectData,
+          role: project.role,
+        };
+      })
     );
 
     return projects;
+  },
+});
+
+export const getProject = query({
+  args: { projectId: v.id('projects'), userEmail: v.string() },
+  handler: async (ctx, args) => {
+    const access = await accessToProject(ctx, args.projectId, args.userEmail);
+    if (!access) return null;
+
+    const projectData = await ctx.db
+      .query('projects')
+      .filter(q => q.eq(q.field('_id'), args.projectId))
+      .first();
+
+    return projectData;
   },
 });
 
@@ -86,60 +129,61 @@ export const createProject = mutation({
   },
 });
 
-export const getTasks = query({
+export const deleteProject = mutation({
+  args: { projectId: v.id('projects'), userEmail: v.string() },
+  handler: async (ctx, args) => {
+    const isAdmin = adminOnly(ctx, args.projectId, args.userEmail);
+
+    if (!isAdmin)
+      throw new ConvexError('You have no permission to perform this action');
+
+    await ctx.db.delete(args.projectId);
+  },
+});
+
+export const leaveProject = mutation({
+  args: { projectId: v.id('projects'), userEmail: v.string() },
+  handler: async (ctx, args) => {
+    const isMember = await accessToProject(ctx, args.projectId, args.userEmail);
+
+    if (!isMember) throw new ConvexError('You can not perform this action');
+
+    const userMember = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId_and_userId', q =>
+        q.eq('projectId', args.projectId).eq('userId', isMember._id)
+      )
+      .first();
+
+    if (!userMember)
+      throw new ConvexError('You are not a member of this project');
+
+    await ctx.db.delete(userMember?._id);
+  },
+});
+
+export const getMembers = query({
   args: { projectId: v.id('projects'), userEmail: v.string() },
   handler: async (ctx, args) => {
     const access = await accessToProject(ctx, args.projectId, args.userEmail);
 
     if (!access) return [];
 
-    const tasks = await ctx.db
-      .query('tasks')
+    const projectMembers = await ctx.db
+      .query('project_members')
       .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
       .collect();
 
-    return tasks;
-  },
-});
-
-export const createTask = mutation({
-  args: {
-    projectId: v.id('projects'),
-    title: v.string(),
-    description: v.string(),
-    tag: v.union(
-      v.literal('feature'),
-      v.literal('fix'),
-      v.literal('test'),
-      v.literal('refactor'),
-      v.literal('deploy')
-    ),
-    status: v.union(
-      v.literal('pending'),
-      v.literal('progress'),
-      v.literal('finished')
-    ),
-    importance: v.union(
-      v.literal('urgent'),
-      v.literal('important'),
-      v.literal('moderate')
-    ),
-    assignedTo: v.id('users'),
-    dueDate: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const access = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
+    const members = await Promise.all(
+      projectMembers.map(async member => {
+        const userData = await ctx.db.get(member.userId);
+        return {
+          ...userData,
+          role: member.role,
+        };
+      })
     );
 
-    if (!access) throw new ConvexError('You do not have access');
-
-    const taskId = await ctx.db.insert('tasks', {
-      ...args,
-    });
-
-    return taskId;
+    return members;
   },
 });
