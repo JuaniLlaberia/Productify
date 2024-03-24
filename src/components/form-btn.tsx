@@ -8,14 +8,23 @@ import { useTheme } from 'next-themes';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 
-type FormBtnType = {} & ComponentProps<'button'>;
+type FormBtnType = {
+  size?: 'default' | 'sm';
+  dangerMode?: boolean;
+} & ComponentProps<'button'>;
 
-const FormBtn = ({ ...props }: FormBtnType) => {
+const FormBtn = ({
+  size = 'default',
+  dangerMode = false,
+  ...props
+}: FormBtnType) => {
   const { pending } = useFormStatus();
   const { theme } = useTheme();
 
   return (
     <Button
+      size={size}
+      variant={dangerMode ? 'destructive' : 'default'}
       {...props}
       disabled={pending}
       aria-disabled={pending}
