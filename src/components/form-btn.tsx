@@ -23,6 +23,7 @@ const FormBtn = ({
 
   return (
     <Button
+      type='submit'
       size={size}
       variant={dangerMode ? 'destructive' : 'default'}
       {...props}
