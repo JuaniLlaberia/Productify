@@ -61,15 +61,14 @@ export default defineSchema({
   }).index('by_projectId', ['projectId']),
 
   references: defineTable({
+    name: v.string(),
     projectId: v.id('projects'),
     type: v.union(
       //Used for displaying custom icons
       v.literal('github'),
       v.literal('gitlab'),
       v.literal('stackoverflow'),
-      v.literal('figma'),
       v.literal('documentation'),
-      v.literal('article'),
       v.literal('other')
     ),
     reference: v.string(),
