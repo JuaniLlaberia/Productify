@@ -13,3 +13,15 @@ export const TaskFormSchema = z.object({
   assignedTo: z.string(),
   dueDate: z.date(),
 });
+
+export const MessageSchema = z.object({
+  data: z.string().min(1),
+});
+
+export const ReferenceSchema = z.object({
+  projectId: z.string(),
+  name: z.string(),
+  type: z.enum(['github', 'gitlab', 'stackoverflow', 'documentation', 'other']),
+  reference: z.string(),
+  isPinned: z.optional(z.boolean()),
+});
