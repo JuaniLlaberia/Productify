@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { fetchMutation } from 'convex/nextjs';
 
-import { Id } from '../../../convex/_generated/dataModel';
+import { Doc, Id } from '../../../convex/_generated/dataModel';
 import { TaskFormSchema } from '../schemas';
 import { api } from '../../../convex/_generated/api';
 
@@ -9,8 +9,6 @@ export const createTask = async (
   extraInfo: { projectId: Id<'projects'>; dueDate: Date | undefined },
   formData: FormData
 ) => {
-  const session = await getServerSession();
-
   //Fields validation
   const rawFormData = Object.fromEntries(formData.entries());
 
@@ -24,14 +22,15 @@ export const createTask = async (
 
   const importance = 'important';
 
+  const data = {
+    ...validatedFields.data,
+    importance,
+    dueDate: validatedFields.data.dueDate.getMilliseconds(),
+  } as Doc<'tasks'>;
+
   await fetchMutation(api.tasks.createTask, {
-    taskData: {
-      ...validatedFields.data,
-      importance,
-      dueDate: validatedFields.data.dueDate.getMilliseconds(),
-      assignedTo: 'j578w41a6ypn0k2zpvkgz9111s6nhajh',
-    },
-    userEmail: session?.user?.email!,
+    taskData: data,
+    userEmail: 'juanillaberia2002@gmail.com',
   });
 };
 
@@ -39,12 +38,9 @@ export const updateTask = async (
   extraInfo: {
     projectId: Id<'projects'>;
     dueDate: Date | undefined;
-    taskId: Id<'tasks'>;
   },
   formData: FormData
 ) => {
-  const session = await getServerSession();
-
   //Fields validation
   const rawFormData = Object.fromEntries(formData.entries());
 
@@ -56,15 +52,14 @@ export const updateTask = async (
 
   if (!validatedFields.success) return {};
 
+  const data = {
+    ...validatedFields.data,
+    dueDate: validatedFields.data.dueDate.getMilliseconds(),
+  } as Doc<'tasks'>;
+
   await fetchMutation(api.tasks.updateTask, {
-    taskData: {
-      _id: extraInfo.taskId,
-      ...validatedFields.data,
-      dueDate: validatedFields.data.dueDate.getMilliseconds(),
-      importance: 'important',
-      assignedTo: 'j578w41a6ypn0k2zpvkgz9111s6nhajh',
-    },
-    userEmail: session?.user?.email!,
+    taskData: data,
+    userEmail: 'juanillaberia2002@gmail.com',
   });
 };
 

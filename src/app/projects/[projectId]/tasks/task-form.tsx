@@ -6,6 +6,7 @@ import {
   HiOutlineUser,
 } from 'react-icons/hi2';
 import { useState } from 'react';
+import { useQuery } from 'convex/react';
 
 import FormBtn from '@/components/form-btn';
 import { Label } from '@/components/ui/label';
@@ -23,14 +24,13 @@ import { tags } from '@/utils/consts';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import { createTask, updateTask } from '@/lib/actions/tasks-actions';
 import { SheetClose } from '@/components/ui/sheet';
-import { useQuery } from 'convex/react';
 import { api } from '../../../../../convex/_generated/api';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type TaskFormType = {
   projectId: Id<'projects'>;
   editMode?: boolean;
-  prevData?: any; //TODO: FIX THIS TYPE!!
+  prevData?: any;
 };
 
 const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
@@ -46,7 +46,7 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
   //Binded actions
   const createTaskWithProjId = createTask.bind(null, { projectId, dueDate });
   const updateTaskWithProjId = updateTask.bind(null, {
-    taskId: prevData._id,
+    taskId: prevData?._id,
     projectId,
     dueDate,
   });

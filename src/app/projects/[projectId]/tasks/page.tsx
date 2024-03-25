@@ -2,7 +2,7 @@ import { HiOutlinePlus } from 'react-icons/hi2';
 import { getServerSession } from 'next-auth';
 
 import TasksBoard from './tasks-board';
-import TaskForm from './create-task-form';
+import TaskForm from './task-form';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,

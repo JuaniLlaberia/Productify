@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import TaskForm from './create-task-form';
+import TaskForm from './task-form';
 
 type TasksColumnType = {
   status: 'pending' | 'progress' | 'finished';
