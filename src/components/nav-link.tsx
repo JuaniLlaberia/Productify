@@ -8,15 +8,15 @@ type NavLinkType = {
   to: string;
   icon?: ReactElement;
   children: string;
+  closeFn?: () => void;
 };
 
-const NavLink = ({ to, icon, children }: NavLinkType) => {
+const NavLink = ({ to, icon, children, closeFn }: NavLinkType) => {
   const pathname = usePathname();
-
-  console.log(`/${pathname.split('/').at(-1)}`, to);
 
   return (
     <Link
+      onClick={closeFn}
       className={`flex items-center gap-2 p-2 w-full hover:bg-background-hover-2 rounded-lg transition-colors
         ${
           `/${pathname.split('/').at(-1)}` === `/${to}`

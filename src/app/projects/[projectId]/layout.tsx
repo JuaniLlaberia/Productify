@@ -1,14 +1,21 @@
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+
 import Sidebar from '@/app/projects/[projectId]/sidebar';
 import NavbarProjects from '@/app/projects/[projectId]/navbar-projects';
 
-export default function ProjectsLayout({
+export default async function ProjectsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
+
+  if (!session?.user) redirect('/');
+
   return (
     <main className='flex h-full'>
-      {/* <Sidebar /> */}
+      <Sidebar userEmail={session.user?.email as string} />
       <section className='w-full flex flex-col flex-1 max-h-screen overflow-y-auto overflow-x-hidden'>
         <NavbarProjects />
         <div
