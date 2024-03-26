@@ -8,27 +8,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createReference } from '@/lib/actions/references-actions';
+import {
+  createReference,
+  updateReference,
+} from '@/lib/actions/references-actions';
 
-const ReferenceForm = ({ projectId }: { projectId: string }) => {
+type ReferenceFormType = {
+  projectId: string;
+  isEditMode?: boolean;
+  prevData?: any;
+};
+
+const ReferenceForm = ({
+  projectId,
+  isEditMode = false,
+  prevData,
+}: ReferenceFormType) => {
   const createRefWithId = createReference.bind(null, projectId);
+  const updatetRefWithId = updateReference.bind(null, {
+    projectId,
+    refId: prevData?._id,
+    isPinned: prevData?.isPinned || false,
+  });
 
   return (
-    <form action={createRefWithId}>
+    <form action={isEditMode ? updatetRefWithId : createRefWithId}>
       <Label htmlFor='name'>Name</Label>
       <Input
         id='name'
         name='name'
         placeholder='Reference name'
-      />
-      <Label htmlFor='reference'>Link</Label>
-      <Input
-        id='reference'
-        name='reference'
-        placeholder='Reference link'
+        defaultValue={prevData?.name}
       />
       <Label htmlFor='type'>Type</Label>
-      <Select name='type'>
+      <Select
+        defaultValue={prevData?.type}
+        name='type'
+      >
         <SelectTrigger id='type'>
           <SelectValue placeholder='Select type' />
         </SelectTrigger>
@@ -40,7 +56,14 @@ const ReferenceForm = ({ projectId }: { projectId: string }) => {
           <SelectItem value='other'>Other</SelectItem>
         </SelectContent>
       </Select>
-      <FormBtn className='w-full mt-3'>Add</FormBtn>
+      <Label htmlFor='reference'>Link</Label>
+      <Input
+        defaultValue={prevData?.reference}
+        id='reference'
+        name='reference'
+        placeholder='Reference link'
+      />
+      <FormBtn className='w-full mt-3'>{isEditMode ? 'Edit' : 'Add'}</FormBtn>
     </form>
   );
 };

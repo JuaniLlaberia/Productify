@@ -5,10 +5,12 @@ import {
   HiOutlineEllipsisVertical,
   HiOutlinePencil,
   HiOutlineQuestionMarkCircle,
+  HiOutlineStar,
   HiOutlineTrash,
 } from 'react-icons/hi2';
 
 import Badge from '@/components/ui/badge';
+import ReferenceForm from './reference-form';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,6 +19,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Doc } from '../../../../../convex/_generated/dataModel';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { deleteReference } from '@/lib/actions/references-actions';
 
 const iconGenerator = (
   type: 'github' | 'gitlab' | 'stackoverflow' | 'documentation' | 'other'
@@ -36,7 +46,16 @@ const iconGenerator = (
 };
 
 const RefCard = ({ referenceData }: { referenceData: Doc<'references'> }) => {
-  const { name, type, reference, isPinned } = referenceData;
+  const {
+    _id: refId,
+    projectId,
+    name,
+    type,
+    reference,
+    isPinned,
+  } = referenceData;
+
+  const action = deleteReference.bind(null, { projectId, refId });
 
   return (
     <li>
@@ -62,27 +81,55 @@ const RefCard = ({ referenceData }: { referenceData: Doc<'references'> }) => {
             )}
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              className='absolute top-2 right-2 text-text-2'
-              size='icon'
-              variant='ghost'
-            >
-              <HiOutlineEllipsisVertical size={20} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              <HiOutlinePencil className='mr-2 h-4 w-4' />
-              <span>Edit reference</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className='text-text-danger'>
-              <HiOutlineTrash className='mr-2 h-4 w-4' />
-              <span>Delete reference</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className='absolute top-2 right-2 text-text-2'
+                size='icon'
+                variant='ghost'
+              >
+                <HiOutlineEllipsisVertical size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <form action={action}>
+                  <button className='flex'>
+                    <HiOutlineStar className='mr-2 h-4 w-4' />
+                    <span>Pin to top</span>
+                  </button>
+                </form>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <DialogTrigger className='w-full'>
+                  <HiOutlinePencil className='mr-2 h-4 w-4' />
+                  <span>Edit reference</span>
+                </DialogTrigger>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className='text-text-danger'>
+                <form action={action}>
+                  <button className='flex'>
+                    <HiOutlineTrash className='mr-2 h-4 w-4' />
+                    <span>Delete reference</span>
+                  </button>
+                </form>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit reference</DialogTitle>
+            </DialogHeader>
+            <ReferenceForm
+              isEditMode
+              prevData={referenceData}
+              projectId={projectId}
+            />
+          </DialogContent>
+        </Dialog>
       </Link>
     </li>
   );
