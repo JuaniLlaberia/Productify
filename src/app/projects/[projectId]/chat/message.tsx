@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { formatDate, formatDateDistance } from '@/utils/formatDate';
 import { Doc } from '../../../../../convex/_generated/dataModel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,7 +11,7 @@ type MessageType = {
 };
 
 const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
-  const { _id: messageId, data, _creationTime } = messageData;
+  const { _id: messageId, data, _creationTime, type } = messageData;
   const { profileImg, name } = senderData;
 
   return (
@@ -49,11 +51,21 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
           </p>
         )}
         <p
-          className={`relative flex flex-col text-text- ${
+          className={`relative flex flex-col text-text-1 font-light ${
             !isFirstInGroup ? 'ml-12' : ''
           } max-w-[75dvw] break-words overflow-hidden xl:text-lg`}
         >
-          {data}
+          {type === 'message' ? (
+            data
+          ) : (
+            <Image
+              className='mt-3 rounded-md'
+              alt='image sent in message'
+              src={data}
+              width={225}
+              height={150}
+            />
+          )}
         </p>
       </div>
     </li>

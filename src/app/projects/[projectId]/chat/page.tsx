@@ -1,6 +1,6 @@
-import { Id } from '../../../../../convex/_generated/dataModel';
 import Conversation from './conversation';
 import ChatInput from './custom-chat-input';
+import { Id } from '../../../../../convex/_generated/dataModel';
 
 const ChatPage = ({ params }: { params: { projectId: string } }) => {
   return (
