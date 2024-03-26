@@ -11,7 +11,7 @@ export const TaskFormSchema = z.object({
   tag: z.string(),
   status: z.string(),
   assignedTo: z.string(),
-  dueDate: z.date(),
+  importance: z.enum(['urgent', 'important', 'moderate']),
 });
 
 export const MessageSchema = z.object({
@@ -20,8 +20,8 @@ export const MessageSchema = z.object({
 
 export const ReferenceSchema = z.object({
   projectId: z.string(),
-  name: z.string(),
+  name: z.string().min(1),
   type: z.enum(['github', 'gitlab', 'stackoverflow', 'documentation', 'other']),
-  reference: z.string(),
+  reference: z.string().min(1).url(),
   isPinned: z.optional(z.boolean()),
 });
