@@ -34,7 +34,7 @@ const FormBtn = ({
       {pending && (
         <ClipLoader
           size={20}
-          color={theme === 'light' ? '#fffafa' : '#1f1c1c'}
+          color={theme === 'light' || dangerMode ? '#fffafa' : '#1f1c1c'}
         />
       )}{' '}
       <span>{props.children}</span>
