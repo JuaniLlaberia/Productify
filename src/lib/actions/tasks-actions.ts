@@ -6,7 +6,7 @@ import { TaskFormSchema } from '../schemas';
 import { api } from '../../../convex/_generated/api';
 
 export const createTask = async (
-  extraInfo: { projectId: Id<'projects'>; dueDate: Date | undefined },
+  extraInfo: { projectId: Id<'projects'> },
   formData: FormData
 ) => {
   //Fields validation
@@ -14,18 +14,13 @@ export const createTask = async (
 
   const validatedFields = TaskFormSchema.safeParse({
     ...rawFormData,
-    dueDate: extraInfo.dueDate,
     projectId: extraInfo.projectId,
   });
 
   if (!validatedFields.success) return {};
 
-  const importance = 'important';
-
   const data = {
     ...validatedFields.data,
-    importance,
-    dueDate: validatedFields.data.dueDate.getMilliseconds(),
   } as Doc<'tasks'>;
 
   await fetchMutation(api.tasks.createTask, {
@@ -36,8 +31,8 @@ export const createTask = async (
 
 export const updateTask = async (
   extraInfo: {
+    taskId: string;
     projectId: Id<'projects'>;
-    dueDate: Date | undefined;
   },
   formData: FormData
 ) => {
@@ -46,7 +41,6 @@ export const updateTask = async (
 
   const validatedFields = TaskFormSchema.safeParse({
     ...rawFormData,
-    dueDate: extraInfo.dueDate,
     projectId: extraInfo.projectId,
   });
 
@@ -54,7 +48,7 @@ export const updateTask = async (
 
   const data = {
     ...validatedFields.data,
-    dueDate: validatedFields.data.dueDate.getMilliseconds(),
+    _id: extraInfo.taskId,
   } as Doc<'tasks'>;
 
   await fetchMutation(api.tasks.updateTask, {
@@ -67,11 +61,9 @@ export const deleteTask = async (
   projectId: Id<'projects'>,
   taskId: Id<'tasks'>
 ) => {
-  const session = await getServerSession();
-
   await fetchMutation(api.tasks.deleteTask, {
     projectId,
     taskId,
-    userEmail: session?.user?.email!,
+    userEmail: 'juanillaberia2002@gmail.com',
   });
 };

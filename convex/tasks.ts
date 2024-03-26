@@ -26,7 +26,6 @@ export const taskSchemaTypes = {
     v.literal('moderate')
   ),
   assignedTo: v.id('users'),
-  dueDate: v.number(),
 };
 
 export const getTasks = query({
@@ -41,7 +40,18 @@ export const getTasks = query({
       .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
       .collect();
 
-    return tasks;
+    const groupedTasks = tasks.reduce((groupedTasks, crrTask) => {
+      const status = crrTask.status;
+
+      if (!groupedTasks[status]) {
+        groupedTasks[status] = [];
+      }
+
+      groupedTasks[status].push(crrTask);
+      return groupedTasks;
+    }, {} as { [status: string]: Doc<'tasks'>[] });
+
+    return groupedTasks;
   },
 });
 

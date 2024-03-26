@@ -5,7 +5,13 @@ import { useQuery } from 'convex/react';
 import TasksColumn from './tasks-column';
 import { api } from '../../../../../convex/_generated/api';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Id } from '../../../../../convex/_generated/dataModel';
+import { Doc, Id } from '../../../../../convex/_generated/dataModel';
+
+type Tasks = {
+  pending: Doc<'tasks'>[];
+  progress: Doc<'tasks'>[];
+  finished: Doc<'tasks'>[];
+};
 
 const TasksBoard = ({
   projectId,
@@ -17,7 +23,7 @@ const TasksBoard = ({
   const tasks = useQuery(api.tasks.getTasks, {
     projectId,
     userEmail: email,
-  });
+  }) as Tasks;
 
   if (!tasks)
     return (
@@ -33,17 +39,17 @@ const TasksBoard = ({
       <TasksColumn
         projectId={projectId as Id<'projects'>}
         status='pending'
-        tasks={tasks}
+        tasks={tasks.pending || []}
       />
       <TasksColumn
         projectId={projectId as Id<'projects'>}
         status='progress'
-        tasks={tasks}
+        tasks={tasks.progress || []}
       />
       <TasksColumn
         projectId={projectId as Id<'projects'>}
         status='finished'
-        tasks={tasks}
+        tasks={tasks.finished || []}
       />
     </ul>
   );

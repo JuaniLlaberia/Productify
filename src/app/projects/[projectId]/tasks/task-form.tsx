@@ -1,11 +1,11 @@
 'use client';
 
 import {
+  HiOutlineCalendarDays,
   HiOutlineSparkles,
   HiOutlineTag,
   HiOutlineUser,
 } from 'react-icons/hi2';
-import { useState } from 'react';
 import { useQuery } from 'convex/react';
 
 import FormBtn from '@/components/form-btn';
@@ -19,13 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
 import { tags } from '@/utils/consts';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import { createTask, updateTask } from '@/lib/actions/tasks-actions';
-import { SheetClose } from '@/components/ui/sheet';
 import { api } from '../../../../../convex/_generated/api';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { SheetClose } from '@/components/ui/sheet';
 
 type TaskFormType = {
   projectId: Id<'projects'>;
@@ -39,16 +38,11 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
     userEmail: 'juanillaberia2002@gmail.com',
   });
 
-  const [dueDate, setDueDate] = useState<Date | undefined>(
-    editMode ? new Date(prevData.dueDate) : new Date()
-  );
-
   //Binded actions
-  const createTaskWithProjId = createTask.bind(null, { projectId, dueDate });
+  const createTaskWithProjId = createTask.bind(null, { projectId });
   const updateTaskWithProjId = updateTask.bind(null, {
     taskId: prevData?._id,
     projectId,
-    dueDate,
   });
 
   return (
@@ -139,11 +133,24 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
           </SelectContent>
         </Select>
 
-        <Label>Due Date</Label>
-        <DatePicker
-          date={dueDate}
-          setDate={setDueDate}
-        />
+        <Label htmlFor='importance'>Deadline Type</Label>
+        <Select
+          name='importance'
+          defaultValue={prevData?.importance}
+          required
+        >
+          <SelectTrigger
+            id='importance'
+            icon={<HiOutlineCalendarDays />}
+          >
+            <SelectValue placeholder='Select a deadline' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='urgent'>Urgent</SelectItem>
+            <SelectItem value='important'>Important</SelectItem>
+            <SelectItem value='moderate'>Moderate</SelectItem>
+          </SelectContent>
+        </Select>
 
         <Label htmlFor='description'>Description</Label>
         <Textarea
@@ -153,14 +160,12 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
           id='description'
         />
       </div>
-      <SheetClose asChild>
-        <FormBtn
-          type='submit'
-          className='mb-8'
-        >
-          {editMode ? 'Update' : 'Add'}
-        </FormBtn>
-      </SheetClose>
+      <FormBtn
+        type='submit'
+        className='mb-8'
+      >
+        <SheetClose>{editMode ? 'Update' : 'Add'}</SheetClose>
+      </FormBtn>
     </form>
   );
 };
