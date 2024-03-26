@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from 'convex/react';
+import { usePaginatedQuery, useQuery } from 'convex/react';
 import {
   HiOutlineArrowLeft,
   HiOutlineArrowRight,
@@ -42,13 +42,20 @@ import FormBtn from '@/components/form-btn';
 
 type MembersTableType = {
   projectId: Id<'projects'>;
-  userEmail: string;
 };
 
-const MembersTable = ({ projectId, userEmail }: MembersTableType) => {
-  const members = useQuery(api.projects.getMembers, { projectId, userEmail });
+const MembersTable = ({ projectId }: MembersTableType) => {
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.projects.getMembersPaginated,
+    { projectId },
+    { initialNumItems: 1 }
+  );
+
+  if (status === 'LoadingFirstPage') return <p>loading</p>;
+
   return (
     <>
+      <button onClick={() => loadMore(1)}>MORE</button>
       <Table className='border border-border-1'>
         <TableHeader>
           <TableRow>
@@ -60,7 +67,7 @@ const MembersTable = ({ projectId, userEmail }: MembersTableType) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members?.map(member => (
+          {results?.map(member => (
             <TableRow>
               <TableCell>
                 <Avatar>

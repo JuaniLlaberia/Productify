@@ -35,7 +35,6 @@ type TaskFormType = {
 const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
   const members = useQuery(api.projects.getMembers, {
     projectId,
-    userEmail: 'juanillaberia2002@gmail.com',
   });
 
   //Binded actions

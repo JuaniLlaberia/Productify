@@ -1,7 +1,8 @@
+import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
+
 import MembersTable from './members-table';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import { Input } from '@/components/ui/input';
-import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
 const MembersPage = ({ params }: { params: { projectId: string } }) => {
   return (
@@ -14,10 +15,7 @@ const MembersPage = ({ params }: { params: { projectId: string } }) => {
           className='w-full md:min-w-[400px]'
         />
       </header>
-      <MembersTable
-        projectId={params.projectId as Id<'projects'>}
-        userEmail='juanillaberia2002@gmail.com'
-      />
+      <MembersTable projectId={params.projectId as Id<'projects'>} />
     </>
   );
 };
