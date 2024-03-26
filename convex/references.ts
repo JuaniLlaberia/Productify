@@ -54,6 +54,36 @@ export const createReference = mutation({
   },
 });
 
+export const updateReference = mutation({
+  args: {
+    data: v.object({
+      name: v.string(),
+      reference: v.string(),
+      type: v.union(
+        v.literal('github'),
+        v.literal('gitlab'),
+        v.literal('stackoverflow'),
+        v.literal('documentation'),
+        v.literal('other')
+      ),
+      isPinned: v.boolean(),
+    }),
+    projectId: v.id('projects'),
+    referenceId: v.id('references'),
+  },
+  handler: async (ctx, args) => {
+    const hasAccess = await accessToProject(
+      ctx,
+      args.projectId,
+      'juanillaberia2002@gmail.com'
+    );
+
+    if (!hasAccess) throw new ConvexError('You can not perform this action');
+
+    await ctx.db.patch(args.referenceId, { ...args.data });
+  },
+});
+
 export const deleteReference = mutation({
   args: { referenceId: v.id('references'), projectId: v.id('projects') },
   handler: async (ctx, args) => {

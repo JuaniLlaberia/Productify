@@ -5,7 +5,6 @@ import { fetchMutation } from 'convex/nextjs';
 import { ReferenceSchema } from '../schemas';
 import { api } from '../../../convex/_generated/api';
 import { Id } from '../../../convex/_generated/dataModel';
-import { revalidatePath } from 'next/cache';
 
 export const createReference = async (
   projectId: string,
@@ -20,9 +19,7 @@ export const createReference = async (
     ...rawFormData,
     projectId,
   });
-  if (!validatedData.success) {
-    return;
-  }
+  if (!validatedData.success) return {};
 
   await fetchMutation(api.references.createReference, {
     projectId: projectId as Id<'projects'>,
@@ -30,12 +27,41 @@ export const createReference = async (
       ...validatedData.data,
     },
   });
-
-  revalidatePath(`/projects/${projectId}/references`);
 };
 
-export const updateReference = async () => {};
+export const updateReference = async (
+  extraInfo: {
+    refId: string;
+    projectId: string;
+    isPinned: boolean;
+  },
+  formData: FormData
+) => {
+  const rawFormData = Object.fromEntries(formData.entries());
 
-export const deleteReference = async () => {
-  console.log('TEST');
+  const validatedData = ReferenceSchema.omit({
+    isPinned: true,
+    projectId: true,
+  }).safeParse({
+    ...rawFormData,
+    projectId: extraInfo.projectId,
+  });
+
+  if (!validatedData.success) return {};
+
+  await fetchMutation(api.references.updateReference, {
+    data: { ...validatedData.data, isPinned: extraInfo.isPinned },
+    projectId: extraInfo.projectId as Id<'projects'>,
+    referenceId: extraInfo.refId as Id<'references'>,
+  });
+};
+
+export const deleteReference = async (data: {
+  refId: Id<'references'>;
+  projectId: Id<'projects'>;
+}) => {
+  await fetchMutation(api.references.deleteReference, {
+    projectId: data.projectId,
+    referenceId: data.refId,
+  });
 };
