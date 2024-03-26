@@ -1,4 +1,5 @@
 import { ConvexError, v } from 'convex/values';
+import { paginationOptsValidator } from 'convex/server';
 
 import { MutationCtx, QueryCtx, mutation, query } from './_generated/server';
 import { Id } from './_generated/dataModel';
@@ -162,10 +163,50 @@ export const leaveProject = mutation({
   },
 });
 
-export const getMembers = query({
-  args: { projectId: v.id('projects'), userEmail: v.string() },
+export const getMembersPaginated = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    projectId: v.id('projects'),
+  },
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.projectId, args.userEmail);
+    const access = await accessToProject(
+      ctx,
+      args.projectId,
+      'juanillaberia2002@gmail.com'
+    );
+
+    if (!access) throw new ConvexError('You have no access to this');
+
+    const projectMembers = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
+      .paginate(args.paginationOpts);
+
+    return {
+      ...projectMembers,
+      page: await Promise.all(
+        projectMembers.page.map(async member => {
+          const userData = await ctx.db.get(member.userId);
+          return {
+            ...userData,
+            role: member.role,
+          };
+        })
+      ),
+    };
+  },
+});
+
+export const getMembers = query({
+  args: {
+    projectId: v.id('projects'),
+  },
+  handler: async (ctx, args) => {
+    const access = await accessToProject(
+      ctx,
+      args.projectId,
+      'juanillaberia2002@gmail.com'
+    );
 
     if (!access) return [];
 
@@ -174,7 +215,7 @@ export const getMembers = query({
       .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
       .collect();
 
-    const members = await Promise.all(
+    return await Promise.all(
       projectMembers.map(async member => {
         const userData = await ctx.db.get(member.userId);
         return {
@@ -183,7 +224,30 @@ export const getMembers = query({
         };
       })
     );
+  },
+});
 
-    return members;
+export const removeMember = mutation({
+  args: { projectId: v.id('projects'), userId: v.id('users') },
+  handler: async (ctx, args) => {
+    const hasAccess = await adminOnly(
+      ctx,
+      args.projectId,
+      'juanillaberia2002@gmail.com'
+    );
+
+    if (!hasAccess) throw new ConvexError('You can not perform this action');
+
+    const userMember = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId_and_userId', q =>
+        q.eq('projectId', args.projectId).eq('userId', args.userId)
+      )
+      .first();
+
+    if (!userMember)
+      throw new ConvexError('This user is not a member of this project');
+
+    await ctx.db.delete(userMember?._id);
   },
 });
