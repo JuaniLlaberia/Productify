@@ -42,22 +42,20 @@ export default defineSchema({
       v.literal('moderate')
     ),
     assignedTo: v.id('users'),
-    dueDate: v.number(),
   })
     .index('by_projectId', ['projectId'])
-    .index('by_user_due', ['assignedTo', 'dueDate']),
+    .index('by_user_due', ['assignedTo', 'importance']),
 
   messages: defineTable({
     type: v.union(
-      v.literal('message'), //For sending regular messages
-      v.literal('image'), //For sending images
-      v.literal('reference') //For sending task refs or snippets
+      v.literal('message'),
+      v.literal('image'),
+      v.literal('reference')
     ),
     data: v.string(),
     sendBy: v.id('users'),
     projectId: v.id('projects'),
     parentMessageId: v.optional(v.id('messages')),
-    edited: v.boolean(),
   }).index('by_projectId', ['projectId']),
 
   references: defineTable({
@@ -83,4 +81,22 @@ export default defineSchema({
     .index('by_projectId_and_userId', ['projectId', 'userId'])
     .index('by_projectId', ['projectId'])
     .index('by_userId', ['userId']),
+
+  bugs_reports: defineTable({
+    name: v.string(),
+    projectId: v.id('projects'),
+    description: v.string(),
+    type: v.union(
+      v.literal('ui'),
+      v.literal('functional'),
+      v.literal('server'),
+      v.literal('security'),
+      v.literal('other')
+    ),
+    importance: v.union(
+      v.literal('urgent'),
+      v.literal('important'),
+      v.literal('moderate')
+    ),
+  }),
 });
