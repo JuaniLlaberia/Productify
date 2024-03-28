@@ -54,7 +54,7 @@ const links = [
   },
 ];
 
-const Sidebar = ({ userEmail }: { userEmail: string }) => {
+const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -87,7 +87,7 @@ const Sidebar = ({ userEmail }: { userEmail: string }) => {
               ))}
             </ul>
           </section>
-          <SidebarFooter email={userEmail} />
+          <SidebarFooter />
         </nav>
       </aside>
       {isOpen && (

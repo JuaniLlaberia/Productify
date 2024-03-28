@@ -35,7 +35,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
 
   return (
     <ul className='flex-1 w-full overflow-y-auto'>
-      <div className='flex items-center justify-center my-3'>
+      <div className='flex items-center justify-center'>
         {status === 'CanLoadMore' ? (
           <Button
             size='sm'

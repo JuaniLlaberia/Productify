@@ -20,16 +20,11 @@ import { api } from '../../../../../convex/_generated/api';
 
 type ProjectSettingsCardsType = {
   projectId: Id<'projects'>;
-  userEmail: string;
 };
 
-const ProjectSettingsCards = ({
-  projectId,
-  userEmail,
-}: ProjectSettingsCardsType) => {
+const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
   const projectData = useQuery(api.projects.getProject, {
     projectId,
-    userEmail,
   });
 
   return (
@@ -62,7 +57,10 @@ const ProjectSettingsCards = ({
               name='status'
               required
             >
-              <SelectTrigger id='status'>
+              <SelectTrigger
+                id='status'
+                className='bg-background-2'
+              >
                 <SelectValue placeholder='Select status' />
               </SelectTrigger>
               <SelectContent>

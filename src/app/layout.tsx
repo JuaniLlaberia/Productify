@@ -22,16 +22,14 @@ export default function RootLayout({
     <html lang='en'>
       <body className={`h-screen ${inter.className}`}>
         <NextTopLoader color='#ff9a27' />
-        <ConvexClientProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </ConvexClientProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

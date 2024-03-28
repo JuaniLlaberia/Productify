@@ -13,16 +13,9 @@ type Tasks = {
   finished: Doc<'tasks'>[];
 };
 
-const TasksBoard = ({
-  projectId,
-  email,
-}: {
-  projectId: Id<'projects'>;
-  email: string;
-}) => {
+const TasksBoard = ({ projectId }: { projectId: Id<'projects'> }) => {
   const tasks = useQuery(api.tasks.getTasks, {
     projectId,
-    userEmail: email,
   }) as Tasks;
 
   if (!tasks)

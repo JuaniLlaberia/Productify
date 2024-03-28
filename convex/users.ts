@@ -83,5 +83,7 @@ export const deleteUser = mutation({
       .collect();
 
     await Promise.all(memberProjectToDelete.map(doc => ctx.db.delete(doc._id)));
+
+    return user.clerkIdentifier;
   },
 });
