@@ -6,6 +6,7 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     profileImg: v.optional(v.string()),
+    clerkIdentifier: v.string(),
   }).index('by_email', ['email']),
 
   projects: defineTable({

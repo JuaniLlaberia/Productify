@@ -29,9 +29,9 @@ export const taskSchemaTypes = {
 };
 
 export const getTasks = query({
-  args: { projectId: v.id('projects'), userEmail: v.string() },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.projectId, args.userEmail);
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) return [];
 
@@ -58,14 +58,9 @@ export const getTasks = query({
 export const createTask = mutation({
   args: {
     taskData: v.object(taskSchemaTypes),
-    userEmail: v.string(),
   },
   handler: async (ctx, args) => {
-    const access = await accessToProject(
-      ctx,
-      args.taskData.projectId,
-      args.userEmail
-    );
+    const access = await accessToProject(ctx, args.taskData.projectId);
 
     if (!access) throw new ConvexError('You do not have access');
 
@@ -80,14 +75,9 @@ export const createTask = mutation({
 export const updateTask = mutation({
   args: {
     taskData: v.object(taskSchemaTypes),
-    userEmail: v.string(),
   },
   handler: async (ctx, args) => {
-    const access = await accessToProject(
-      ctx,
-      args.taskData.projectId,
-      args.userEmail
-    );
+    const access = await accessToProject(ctx, args.taskData.projectId);
 
     if (!access) throw new ConvexError('You do not have access');
 
@@ -102,10 +92,9 @@ export const deleteTask = mutation({
   args: {
     taskId: v.id('tasks'),
     projectId: v.id('projects'),
-    userEmail: v.string(),
   },
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.projectId, args.userEmail);
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) throw new ConvexError('You do not have access');
 

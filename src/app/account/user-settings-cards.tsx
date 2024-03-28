@@ -16,8 +16,8 @@ import {
 import { Label } from '../../components/ui/label';
 import { updateUser } from '@/lib/actions/user-actions';
 
-const SettingsCards = ({ email }: { email: string }) => {
-  const userData = useQuery(api.users.getUserByEmail, { email });
+const SettingsCards = () => {
+  const userData = useQuery(api.users.getAuthUser);
 
   return (
     <ul className='flex flex-col gap-4 p-3'>
@@ -99,7 +99,7 @@ const SettingsCards = ({ email }: { email: string }) => {
         description='Permanently remove your account and all of its data from Profuctify.
         This action is not reversible.'
         danger
-        formChild={<DeleteUserModal userEmail={userData?.email!} />}
+        formChild={<DeleteUserModal />}
       />
     </ul>
   );

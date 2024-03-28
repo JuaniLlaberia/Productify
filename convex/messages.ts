@@ -10,11 +10,7 @@ export const getMessages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess)
       throw new ConvexError('You do not have access to this data');
@@ -50,11 +46,7 @@ export const sendMessage = mutation({
     type: v.union(v.literal('message'), v.literal('image')),
   },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 
@@ -72,11 +64,7 @@ export const deleteMessage = mutation({
     messageId: v.id('messages'),
   },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 

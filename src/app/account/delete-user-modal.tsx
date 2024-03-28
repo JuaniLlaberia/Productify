@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { deleteUser } from '@/lib/actions/user-actions';
 
-const DeleteUserModal = ({ userEmail }: { userEmail: string }) => {
+const DeleteUserModal = () => {
   return (
     <AlertDialog>
       <div className='flex items-center justify-end mt-5'>
@@ -42,7 +42,7 @@ const DeleteUserModal = ({ userEmail }: { userEmail: string }) => {
               Cancel
             </Button>
           </AlertDialogCancel>
-          <form action={() => deleteUser(userEmail)}>
+          <form action={deleteUser}>
             <FormBtn
               dangerMode
               size='sm'

@@ -5,11 +5,7 @@ import { accessToProject } from './projects';
 export const getReferences = query({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) return [];
 
@@ -38,11 +34,7 @@ export const createReference = mutation({
     }),
   },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 
@@ -72,11 +64,7 @@ export const updateReference = mutation({
     referenceId: v.id('references'),
   },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 
@@ -87,11 +75,7 @@ export const updateReference = mutation({
 export const deleteReference = mutation({
   args: { referenceId: v.id('references'), projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const hasAccess = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 

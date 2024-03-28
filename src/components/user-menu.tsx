@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 import { useQuery } from 'convex/react';
 import {
   HiOutlineCog6Tooth,
@@ -9,6 +8,7 @@ import {
   HiOutlineFolder,
 } from 'react-icons/hi2';
 
+import ThemeMenu from './theme-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
@@ -20,18 +20,17 @@ import {
 } from './ui/dropdown-menu';
 import { api } from '../../convex/_generated/api';
 import { Skeleton } from './ui/skeleton';
-import ThemeMenu from './theme-menu';
+import { SignOutButton } from '@clerk/nextjs';
 
 type UserMenuType = {
-  email: string;
   withText?: boolean;
 };
 
-const UserMenu = ({ email, withText = true }: UserMenuType) => {
-  const userData = useQuery(api.users.getUserByEmail, { email });
+const UserMenu = ({ withText = true }: UserMenuType) => {
+  const userData = useQuery(api.users.getAuthUser);
 
   if (!userData)
-    return <Skeleton className={`${withText ? 'w-full h-12' : ''}`} />;
+    return <Skeleton className={`${withText ? 'w-full h-12' : 'size-8'}`} />;
 
   return (
     <DropdownMenu>
@@ -66,13 +65,7 @@ const UserMenu = ({ email, withText = true }: UserMenuType) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <HiOutlineArrowRightOnRectangle className='mr-2 h-4 w-4' />
-          <button
-            onClick={() => {
-              signOut({ callbackUrl: 'http://localhost:3000' });
-            }}
-          >
-            Sign out
-          </button>
+          <SignOutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

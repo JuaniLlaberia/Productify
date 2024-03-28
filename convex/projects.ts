@@ -5,13 +5,14 @@ import { MutationCtx, QueryCtx, mutation, query } from './_generated/server';
 import { Id } from './_generated/dataModel';
 
 //Reusable functionalities
-export const isAuth = async (
-  ctx: QueryCtx | MutationCtx,
-  userEmail: string
-) => {
+export const isAuth = async (ctx: QueryCtx | MutationCtx) => {
+  const identity = await ctx.auth.getUserIdentity();
+
+  if (!identity) return null;
+
   const user = await ctx.db
     .query('users')
-    .withIndex('by_email', q => q.eq('email', userEmail))
+    .withIndex('by_email', q => q.eq('email', identity.email as string))
     .first();
 
   if (!user) return null;
@@ -21,11 +22,10 @@ export const isAuth = async (
 
 export const accessToProject = async (
   ctx: QueryCtx | MutationCtx,
-  projectId: Id<'projects'>,
-  userEmail: string
+  projectId: Id<'projects'>
 ) => {
   //Find and validate user
-  const user = await isAuth(ctx, userEmail);
+  const user = await isAuth(ctx);
 
   if (!user) return null;
 
@@ -44,11 +44,10 @@ export const accessToProject = async (
 
 export const adminOnly = async (
   ctx: QueryCtx | MutationCtx,
-  projectId: Id<'projects'>,
-  userEmail: string
+  projectId: Id<'projects'>
 ) => {
   //Find and validate user
-  const user = await isAuth(ctx, userEmail);
+  const user = await isAuth(ctx);
 
   if (!user) return null;
 
@@ -66,9 +65,9 @@ export const adminOnly = async (
 
 //Convex functions
 export const getUserProjects = query({
-  args: { userEmail: v.string() },
+  args: {},
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx, args.userEmail);
+    const user = await isAuth(ctx);
 
     if (!user) return [];
 
@@ -92,9 +91,9 @@ export const getUserProjects = query({
 });
 
 export const getProject = query({
-  args: { projectId: v.id('projects'), userEmail: v.string() },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.projectId, args.userEmail);
+    const access = await accessToProject(ctx, args.projectId);
     if (!access) return null;
 
     const projectData = await ctx.db
@@ -107,9 +106,9 @@ export const getProject = query({
 });
 
 export const createProject = mutation({
-  args: { name: v.string(), userEmail: v.string() },
+  args: { name: v.string() },
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx, args.userEmail);
+    const user = await isAuth(ctx);
 
     if (!user) throw new ConvexError('Must be logged in');
 
@@ -131,9 +130,9 @@ export const createProject = mutation({
 });
 
 export const deleteProject = mutation({
-  args: { projectId: v.id('projects'), userEmail: v.string() },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const isAdmin = adminOnly(ctx, args.projectId, args.userEmail);
+    const isAdmin = adminOnly(ctx, args.projectId);
 
     if (!isAdmin)
       throw new ConvexError('You have no permission to perform this action');
@@ -143,9 +142,9 @@ export const deleteProject = mutation({
 });
 
 export const leaveProject = mutation({
-  args: { projectId: v.id('projects'), userEmail: v.string() },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const isMember = await accessToProject(ctx, args.projectId, args.userEmail);
+    const isMember = await accessToProject(ctx, args.projectId);
 
     if (!isMember) throw new ConvexError('You can not perform this action');
 
@@ -169,11 +168,7 @@ export const getMembersPaginated = query({
     projectId: v.id('projects'),
   },
   handler: async (ctx, args) => {
-    const access = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) throw new ConvexError('You have no access to this');
 
@@ -202,11 +197,7 @@ export const getMembers = query({
     projectId: v.id('projects'),
   },
   handler: async (ctx, args) => {
-    const access = await accessToProject(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) return [];
 
@@ -230,11 +221,7 @@ export const getMembers = query({
 export const removeMember = mutation({
   args: { projectId: v.id('projects'), userId: v.id('users') },
   handler: async (ctx, args) => {
-    const hasAccess = await adminOnly(
-      ctx,
-      args.projectId,
-      'juanillaberia2002@gmail.com'
-    );
+    const hasAccess = await adminOnly(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 

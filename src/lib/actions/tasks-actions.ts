@@ -1,4 +1,3 @@
-import { getServerSession } from 'next-auth';
 import { fetchMutation } from 'convex/nextjs';
 
 import { Doc, Id } from '../../../convex/_generated/dataModel';
@@ -25,7 +24,6 @@ export const createTask = async (
 
   await fetchMutation(api.tasks.createTask, {
     taskData: data,
-    userEmail: 'juanillaberia2002@gmail.com',
   });
 };
 
@@ -53,7 +51,6 @@ export const updateTask = async (
 
   await fetchMutation(api.tasks.updateTask, {
     taskData: data,
-    userEmail: 'juanillaberia2002@gmail.com',
   });
 };
 
@@ -64,6 +61,5 @@ export const deleteTask = async (
   await fetchMutation(api.tasks.deleteTask, {
     projectId,
     taskId,
-    userEmail: 'juanillaberia2002@gmail.com',
   });
 };

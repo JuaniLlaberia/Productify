@@ -3,12 +3,9 @@
 import { fetchMutation } from 'convex/nextjs';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { getServerSession } from 'next-auth';
 import { api } from '../../../convex/_generated/api';
 
 export const updateUser = async (formData: FormData) => {
-  const session = await getServerSession();
-
   const name = (formData.get('name') as string) || undefined;
   const file = formData.get('profileImg') as File;
 
@@ -29,7 +26,6 @@ export const updateUser = async (formData: FormData) => {
   }
 
   await fetchMutation(api.users.updateUser, {
-    userEmail: session?.user?.email!,
     data: {
       name,
       profileImg: imageUrl,
@@ -37,8 +33,8 @@ export const updateUser = async (formData: FormData) => {
   });
 };
 
-export const deleteUser = async (userEmail: string) => {
-  await fetchMutation(api.users.deleteUser, { userEmail });
+export const deleteUser = async () => {
+  await fetchMutation(api.users.deleteUser);
 
   cookies().delete('next-auth.session-token');
   redirect('/');

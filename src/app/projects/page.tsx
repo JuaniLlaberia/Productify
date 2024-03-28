@@ -1,17 +1,19 @@
 import Link from 'next/link';
 import { fetchQuery } from 'convex/nextjs';
 import { HiOutlineFolder, HiOutlinePlus } from 'react-icons/hi2';
-import { getServerSession } from 'next-auth';
 
 import NavbarProjects from '@/app/projects/[projectId]/navbar-projects';
 import ProjectItem, { ExtendedDoc } from '@/app/projects/project-item';
 import { api } from '../../../convex/_generated/api';
+import { getAuthToken } from '@/utils/getAuthToken';
 
 const ProjectsPage = async () => {
-  const session = await getServerSession();
-  const projects = await fetchQuery(api.projects.getUserProjects, {
-    userEmail: session?.user?.email!,
-  });
+  const token = await getAuthToken();
+  const projects = await fetchQuery(
+    api.projects.getUserProjects,
+    {},
+    { token }
+  );
 
   return (
     <main>

@@ -1,26 +1,31 @@
 import { ConvexError, v } from 'convex/values';
-import { mutation, query } from './_generated/server';
+import { internalMutation, mutation, query } from './_generated/server';
 import { isAuth } from './projects';
 
-export const getUserByEmail = query({
-  args: { email: v.string() },
-  handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query('users')
-      .filter(q => q.eq(q.field('email'), args.email))
-      .unique();
+export const getAuthUser = query({
+  args: {},
+  handler: async ctx => {
+    const user = await isAuth(ctx);
+
+    if (!user) null;
 
     return user;
   },
 });
 
-export const createUser = mutation({
-  args: { name: v.string(), email: v.string(), defaultImg: v.string() },
+export const createUser = internalMutation({
+  args: {
+    name: v.string(),
+    email: v.string(),
+    defaultImg: v.string(),
+    clerkId: v.string(),
+  },
   handler: async (ctx, args) => {
     const newUserId = await ctx.db.insert('users', {
       name: args.name,
       email: args.email,
       profileImg: args.defaultImg,
+      clerkIdentifier: args.clerkId,
     });
 
     return newUserId;
@@ -43,14 +48,13 @@ export const generateDownloadUrl = mutation({
 
 export const updateUser = mutation({
   args: {
-    userEmail: v.string(),
     data: v.object({
       name: v.optional(v.string()),
       profileImg: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx, args.userEmail);
+    const user = await isAuth(ctx);
 
     if (!user) throw new ConvexError('Must be logged in');
 
@@ -63,9 +67,9 @@ export const updateUser = mutation({
 });
 
 export const deleteUser = mutation({
-  args: { userEmail: v.string() },
+  args: {},
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx, args.userEmail);
+    const user = await isAuth(ctx);
 
     if (!user) throw new ConvexError('Must be logged in');
 
