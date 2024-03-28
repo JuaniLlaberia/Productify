@@ -3,6 +3,7 @@ import { fetchMutation } from 'convex/nextjs';
 import { Doc, Id } from '../../../convex/_generated/dataModel';
 import { TaskFormSchema } from '../schemas';
 import { api } from '../../../convex/_generated/api';
+import { getAuthToken } from '@/utils/getAuthToken';
 
 export const createTask = async (
   extraInfo: { projectId: Id<'projects'> },
@@ -18,13 +19,20 @@ export const createTask = async (
 
   if (!validatedFields.success) return {};
 
+  //Token
+  const token = await getAuthToken();
+
   const data = {
     ...validatedFields.data,
   } as Doc<'tasks'>;
 
-  await fetchMutation(api.tasks.createTask, {
-    taskData: data,
-  });
+  await fetchMutation(
+    api.tasks.createTask,
+    {
+      taskData: data,
+    },
+    { token }
+  );
 };
 
 export const updateTask = async (
@@ -44,22 +52,36 @@ export const updateTask = async (
 
   if (!validatedFields.success) return {};
 
+  //Token
+  const token = await getAuthToken();
+
   const data = {
     ...validatedFields.data,
     _id: extraInfo.taskId,
   } as Doc<'tasks'>;
 
-  await fetchMutation(api.tasks.updateTask, {
-    taskData: data,
-  });
+  await fetchMutation(
+    api.tasks.updateTask,
+    {
+      taskData: data,
+    },
+    { token }
+  );
 };
 
 export const deleteTask = async (
   projectId: Id<'projects'>,
   taskId: Id<'tasks'>
 ) => {
-  await fetchMutation(api.tasks.deleteTask, {
-    projectId,
-    taskId,
-  });
+  //Token
+  const token = await getAuthToken();
+
+  await fetchMutation(
+    api.tasks.deleteTask,
+    {
+      projectId,
+      taskId,
+    },
+    { token }
+  );
 };

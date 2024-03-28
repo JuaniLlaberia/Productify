@@ -4,8 +4,13 @@ import { fetchMutation } from 'convex/nextjs';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { api } from '../../../convex/_generated/api';
+import { getAuthToken } from '@/utils/getAuthToken';
+import { clerkClient } from '@clerk/nextjs';
 
 export const updateUser = async (formData: FormData) => {
+  //Token
+  const token = await getAuthToken();
+
   const name = (formData.get('name') as string) || undefined;
   const file = formData.get('profileImg') as File;
 
@@ -25,17 +30,30 @@ export const updateUser = async (formData: FormData) => {
     });
   }
 
-  await fetchMutation(api.users.updateUser, {
-    data: {
-      name,
-      profileImg: imageUrl,
+  await fetchMutation(
+    api.users.updateUser,
+    {
+      data: {
+        name,
+        profileImg: imageUrl,
+      },
     },
-  });
+    { token }
+  );
 };
 
 export const deleteUser = async () => {
-  await fetchMutation(api.users.deleteUser);
+  //Token
+  const token = await getAuthToken();
 
-  cookies().delete('next-auth.session-token');
+  const clerkUserToDelete = await fetchMutation(
+    api.users.deleteUser,
+    {},
+    { token }
+  );
+
+  //Delete user from clerk
+  await clerkClient.users.deleteUser(clerkUserToDelete);
+
   redirect('/');
 };

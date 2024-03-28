@@ -1,5 +1,5 @@
 import { fetchMutation } from 'convex/nextjs';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { ProjectFormSchema } from '../schemas';
@@ -33,6 +33,5 @@ export const createProject = async (prevState: State, formData: FormData) => {
     { token }
   );
 
-  revalidatePath('/projects');
   redirect(`/projects/${projectId}/dashboard`);
 };

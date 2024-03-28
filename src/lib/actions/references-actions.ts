@@ -5,6 +5,7 @@ import { fetchMutation } from 'convex/nextjs';
 import { ReferenceSchema } from '../schemas';
 import { api } from '../../../convex/_generated/api';
 import { Id } from '../../../convex/_generated/dataModel';
+import { getAuthToken } from '@/utils/getAuthToken';
 
 export const createReference = async (
   projectId: string,
@@ -21,12 +22,19 @@ export const createReference = async (
   });
   if (!validatedData.success) return {};
 
-  await fetchMutation(api.references.createReference, {
-    projectId: projectId as Id<'projects'>,
-    referenceData: {
-      ...validatedData.data,
+  //Token
+  const token = await getAuthToken();
+
+  await fetchMutation(
+    api.references.createReference,
+    {
+      projectId: projectId as Id<'projects'>,
+      referenceData: {
+        ...validatedData.data,
+      },
     },
-  });
+    { token }
+  );
 };
 
 export const updateReference = async (
@@ -49,19 +57,33 @@ export const updateReference = async (
 
   if (!validatedData.success) return {};
 
-  await fetchMutation(api.references.updateReference, {
-    data: { ...validatedData.data, isPinned: extraInfo.isPinned },
-    projectId: extraInfo.projectId as Id<'projects'>,
-    referenceId: extraInfo.refId as Id<'references'>,
-  });
+  //Token
+  const token = await getAuthToken();
+
+  await fetchMutation(
+    api.references.updateReference,
+    {
+      data: { ...validatedData.data, isPinned: extraInfo.isPinned },
+      projectId: extraInfo.projectId as Id<'projects'>,
+      referenceId: extraInfo.refId as Id<'references'>,
+    },
+    { token }
+  );
 };
 
 export const deleteReference = async (data: {
   refId: Id<'references'>;
   projectId: Id<'projects'>;
 }) => {
-  await fetchMutation(api.references.deleteReference, {
-    projectId: data.projectId,
-    referenceId: data.refId,
-  });
+  //Token
+  const token = await getAuthToken();
+
+  await fetchMutation(
+    api.references.deleteReference,
+    {
+      projectId: data.projectId,
+      referenceId: data.refId,
+    },
+    { token }
+  );
 };
