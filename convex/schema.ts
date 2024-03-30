@@ -7,7 +7,9 @@ export default defineSchema({
     email: v.string(),
     profileImg: v.optional(v.string()),
     clerkIdentifier: v.string(),
-  }).index('by_email', ['email']),
+  })
+    .index('by_email', ['email'])
+    .index('by_clerkId', ['clerkIdentifier']),
 
   projects: defineTable({
     name: v.string(),
@@ -83,14 +85,14 @@ export default defineSchema({
     .index('by_projectId', ['projectId'])
     .index('by_userId', ['userId']),
 
-  bugs_reports: defineTable({
+  reports: defineTable({
     name: v.string(),
     projectId: v.id('projects'),
     description: v.string(),
     type: v.union(
-      v.literal('ui'),
+      v.literal('ui/ux'),
       v.literal('functional'),
-      v.literal('server'),
+      v.literal('performance'),
       v.literal('security'),
       v.literal('other')
     ),
@@ -99,5 +101,5 @@ export default defineSchema({
       v.literal('important'),
       v.literal('moderate')
     ),
-  }),
+  }).index('by_projectId', ['projectId']),
 });
