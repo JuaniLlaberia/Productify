@@ -7,6 +7,7 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineFolder,
 } from 'react-icons/hi2';
+import { useClerk } from '@clerk/nextjs';
 
 import ThemeMenu from './theme-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -20,7 +21,7 @@ import {
 } from './ui/dropdown-menu';
 import { api } from '../../convex/_generated/api';
 import { Skeleton } from './ui/skeleton';
-import { SignOutButton } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 type UserMenuType = {
   withText?: boolean;
@@ -28,6 +29,9 @@ type UserMenuType = {
 
 const UserMenu = ({ withText = true }: UserMenuType) => {
   const userData = useQuery(api.users.getAuthUser);
+
+  const { openUserProfile, signOut } = useClerk();
+  const router = useRouter();
 
   if (!userData)
     return <Skeleton className={`${withText ? 'w-full h-12' : 'size-8'}`} />;
@@ -56,16 +60,16 @@ const UserMenu = ({ withText = true }: UserMenuType) => {
           </DropdownMenuItem>
         </Link>
         <ThemeMenu />
-        <Link href='/account'>
-          <DropdownMenuItem>
-            <HiOutlineCog6Tooth className='mr-2 h-4 w-4' />
-            <span>Settings</span>
-          </DropdownMenuItem>
-        </Link>
+        <DropdownMenuItem onClick={() => openUserProfile()}>
+          <HiOutlineCog6Tooth className='mr-2 h-4 w-4' />
+          <span>Settings</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <HiOutlineArrowRightOnRectangle className='mr-2 h-4 w-4' />
-          <SignOutButton />
+          <button onClick={() => signOut(() => router.push('/'))}>
+            Sign out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
