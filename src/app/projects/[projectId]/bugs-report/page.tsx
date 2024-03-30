@@ -1,11 +1,36 @@
+import { HiOutlinePlus } from 'react-icons/hi2';
+
 import BugsTable from './bugs-table';
 import { Id } from '../../../../../convex/_generated/dataModel';
+import { Button } from '@/components/ui/button';
+import ReportsForm from './reports-form';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 const BugsReportPage = ({ params }: { params: { projectId: string } }) => {
   return (
     <>
-      <header className='w-full flex flex-col md:flex-row lg:items-center lg:justify-between mb-4 lg:mb-6'>
-        <h1 className='text-xl w-full mb-3 lg:mb-0'>Bugs reports</h1>
+      <header className='w-full flex items-center justify-between mb-6'>
+        <h1 className='text-xl'>Bugs reports</h1>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size='sm'>
+              <HiOutlinePlus className='mr-2' size={16} />
+              Add
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>New Bug Report</SheetTitle>
+            </SheetHeader>
+            <ReportsForm projectId={params.projectId as Id<'projects'>} />
+          </SheetContent>
+        </Sheet>
       </header>
       <BugsTable projectId={params.projectId as Id<'projects'>} />
     </>
