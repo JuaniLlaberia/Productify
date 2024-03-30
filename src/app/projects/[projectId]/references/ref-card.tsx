@@ -3,10 +3,7 @@ import { BsGithub, BsGitlab, BsStackOverflow } from 'react-icons/bs';
 import {
   HiOutlineDocument,
   HiOutlineEllipsisVertical,
-  HiOutlinePencil,
   HiOutlineQuestionMarkCircle,
-  HiOutlineStar,
-  HiOutlineTrash,
 } from 'react-icons/hi2';
 
 import Badge from '@/components/ui/badge';
@@ -14,19 +11,16 @@ import ReferenceForm from './reference-form';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Doc } from '../../../../../convex/_generated/dataModel';
+import RefCardMenu from './ref-card-menu';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { deleteReference } from '@/lib/actions/references-actions';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 const iconGenerator = (
   type: 'github' | 'gitlab' | 'stackoverflow' | 'documentation' | 'other'
@@ -55,8 +49,6 @@ const RefCard = ({ referenceData }: { referenceData: Doc<'references'> }) => {
     isPinned,
   } = referenceData;
 
-  const action = deleteReference.bind(null, { projectId, refId });
-
   return (
     <li>
       <Link
@@ -69,19 +61,11 @@ const RefCard = ({ referenceData }: { referenceData: Doc<'references'> }) => {
         <div className='flex flex-col items-start'>
           <h3 className='mb-3 font-medium'>{name}</h3>
           <div className='flex items-center gap-1'>
-            <Badge
-              color='gray'
-              text={type}
-            />
-            {isPinned && (
-              <Badge
-                color='blue'
-                text='Pinned'
-              />
-            )}
+            <Badge color='gray' text={type} />
+            {isPinned && <Badge color='blue' text='Pinned' />}
           </div>
         </div>
-        <Dialog>
+        <Sheet>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -92,44 +76,23 @@ const RefCard = ({ referenceData }: { referenceData: Doc<'references'> }) => {
                 <HiOutlineEllipsisVertical size={20} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>
-                <form action={action}>
-                  <button className='flex'>
-                    <HiOutlineStar className='mr-2 h-4 w-4' />
-                    <span>Pin to top</span>
-                  </button>
-                </form>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                <DialogTrigger className='w-full'>
-                  <HiOutlinePencil className='mr-2 h-4 w-4' />
-                  <span>Edit reference</span>
-                </DialogTrigger>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem className='text-text-danger'>
-                <form action={action}>
-                  <button className='flex'>
-                    <HiOutlineTrash className='mr-2 h-4 w-4' />
-                    <span>Delete reference</span>
-                  </button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+            <RefCardMenu
+              referenceId={refId}
+              isPinned={isPinned}
+              projectId={projectId}
+            />
           </DropdownMenu>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit reference</DialogTitle>
-            </DialogHeader>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Edit reference</SheetTitle>
+            </SheetHeader>
             <ReferenceForm
               isEditMode
               prevData={referenceData}
               projectId={projectId}
             />
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </Link>
     </li>
   );

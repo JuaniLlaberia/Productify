@@ -48,7 +48,7 @@ export const createReference = mutation({
 
 export const updateReference = mutation({
   args: {
-    data: v.object({
+    referenceData: v.object({
       name: v.string(),
       reference: v.string(),
       type: v.union(
@@ -68,7 +68,22 @@ export const updateReference = mutation({
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 
-    await ctx.db.patch(args.referenceId, { ...args.data });
+    await ctx.db.patch(args.referenceId, { ...args.referenceData });
+  },
+});
+
+export const togglePin = mutation({
+  args: {
+    referenceId: v.id('references'),
+    projectId: v.id('projects'),
+    value: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const hasAccess = await accessToProject(ctx, args.projectId);
+
+    if (!hasAccess) throw new ConvexError('You can not perform this action');
+
+    await ctx.db.patch(args.referenceId, { isPinned: args.value });
   },
 });
 
