@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react';
 
-import SettingsCard from '@/app/account/settings-card';
+import SettingsCard from '@/components/settings-card';
 import FormBtn from '@/components/form-btn';
 import Badge from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -52,38 +52,19 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
         description='Update the status of your project depending on what stage of the developing proccess is.'
         formChild={
           <form>
-            <Select
-              defaultValue={projectData?.status}
-              name='status'
-              required
-            >
-              <SelectTrigger
-                id='status'
-                className='bg-background-2'
-              >
+            <Select defaultValue={projectData?.status} name='status' required>
+              <SelectTrigger id='status' className='bg-background-2'>
                 <SelectValue placeholder='Select status' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='active'>
-                  <Badge
-                    text='Active'
-                    color='green'
-                    decorated
-                  />
+                  <Badge text='Active' color='green' decorated />
                 </SelectItem>
                 <SelectItem value='mantainance'>
-                  <Badge
-                    text='Mantainance'
-                    color='red'
-                    decorated
-                  />
+                  <Badge text='Mantainance' color='red' decorated />
                 </SelectItem>
                 <SelectItem value='inactive'>
-                  <Badge
-                    text='Inactive'
-                    color='blue'
-                    decorated
-                  />
+                  <Badge text='Inactive' color='blue' decorated />
                 </SelectItem>
               </SelectContent>
             </Select>

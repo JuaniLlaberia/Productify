@@ -26,8 +26,8 @@ const ChatInput = ({ projectId }: { projectId: Id<'projects'> }) => {
     sendMessage({ projectId: projectId, data: newMessageText, type });
   };
 
-  const getUploadUrl = useMutation(api.users.generateUploadUrl);
-  const getDownloadUrl = useMutation(api.users.generateDownloadUrl);
+  const getUploadUrl = useMutation(api.utils.generateUploadUrl);
+  const getDownloadUrl = useMutation(api.utils.generateDownloadUrl);
 
   return (
     <div className='flex items-center gap-2 w-full mt-2'>
@@ -76,10 +76,7 @@ const ChatInput = ({ projectId }: { projectId: Id<'projects'> }) => {
             placeholder='Type message here'
           />
         </div>
-        <Button
-          type='submit'
-          className='hidden md:block'
-        >
+        <Button type='submit' className='hidden md:block'>
           Send
         </Button>
         <Button
