@@ -1,10 +1,12 @@
+'use client';
+
 import {
   HiOutlineEllipsisVertical,
   HiOutlinePencil,
   HiOutlineTrash,
 } from 'react-icons/hi2';
+import { useMutation } from 'convex/react';
 
-import FormBtn from '@/components/form-btn';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -23,8 +25,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { SheetTrigger } from '@/components/ui/sheet';
-import { deleteTask } from '@/lib/actions/tasks-actions';
 import { Id } from '../../../../../convex/_generated/dataModel';
+import { api } from '../../../../../convex/_generated/api';
 
 type CardMenuType = {
   projectId: Id<'projects'>;
@@ -32,6 +34,8 @@ type CardMenuType = {
 };
 
 const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
+  const deleteTask = useMutation(api.tasks.deleteTask);
+
   return (
     <AlertDialog>
       <DropdownMenu>
@@ -55,10 +59,7 @@ const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
             </SheetTrigger>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className='text-text-danger'
-            asChild
-          >
+          <DropdownMenuItem className='text-text-danger' asChild>
             <AlertDialogTrigger className='w-full'>
               <>
                 <HiOutlineTrash className='mr-2 h-4 w-4' />
@@ -80,21 +81,17 @@ const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
         </AlertDialogHeader>
         <AlertDialogFooter className='flex flex-row justify-between'>
           <AlertDialogCancel asChild>
-            <Button
-              variant='ghost'
-              size='sm'
-            >
+            <Button variant='ghost' size='sm'>
               Cancel
             </Button>
           </AlertDialogCancel>
-          <form action={() => deleteTask(projectId, taskId)}>
-            <FormBtn
-              dangerMode
-              size='sm'
-            >
-              Confirm
-            </FormBtn>
-          </form>
+          <Button
+            variant='destructive'
+            size='sm'
+            onClick={() => deleteTask({ projectId, taskId })}
+          >
+            Confirm
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

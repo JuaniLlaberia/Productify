@@ -36,22 +36,14 @@ const TasksColumn = ({ status, tasks, projectId }: TasksColumnType) => {
             decorated
           />
           <SheetTrigger asChild>
-            <Button
-              variant='ghost'
-              size='icon'
-            >
+            <Button variant='ghost' size='icon'>
               <HiOutlinePlus size={17} />
             </Button>
           </SheetTrigger>
         </header>
         <ul className='flex flex-col gap-2'>
           {tasks.length > 0 ? (
-            tasks.map(task => (
-              <TaskCard
-                taskInfo={task}
-                key={task._id}
-              />
-            ))
+            tasks.map(task => <TaskCard taskInfo={task} key={task._id} />)
           ) : (
             <SheetTrigger asChild>
               <Button
@@ -69,10 +61,7 @@ const TasksColumn = ({ status, tasks, projectId }: TasksColumnType) => {
           <SheetHeader>
             <SheetTitle>New Task</SheetTitle>
           </SheetHeader>
-          <TaskForm
-            projectId={projectId}
-            prevData={{ status }}
-          />
+          <TaskForm projectId={projectId} prevData={{ status }} />
         </SheetContent>
       </Sheet>
     </li>
