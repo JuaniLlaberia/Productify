@@ -29,6 +29,20 @@ http.route({
             defaultImg: result.data.image_url,
             clerkId: result.data.id,
           });
+          break;
+        case 'user.updated':
+          await ctx.runMutation(internal.users.updateUser, {
+            name: `${result.data.first_name} ${result.data.last_name}`,
+            email: result.data.email_addresses[0].email_address,
+            defaultImg: result.data.image_url,
+            clerkId: result.data.id,
+          });
+          break;
+        case 'user.deleted':
+          await ctx.runMutation(internal.users.deleteUser, {
+            clerkId: result.data.id!,
+          });
+          break;
       }
 
       return new Response(null, {

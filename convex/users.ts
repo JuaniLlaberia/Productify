@@ -1,5 +1,5 @@
 import { ConvexError, v } from 'convex/values';
-import { internalMutation, mutation, query } from './_generated/server';
+import { internalMutation, query } from './_generated/server';
 import { isAuth } from './projects';
 
 export const getAuthUser = query({
@@ -32,46 +32,38 @@ export const createUser = internalMutation({
   },
 });
 
-export const generateUploadUrl = mutation(async ctx => {
-  return await ctx.storage.generateUploadUrl();
-});
-
-export const generateDownloadUrl = mutation({
-  args: { storageId: v.id('_storage') },
-  handler: async (ctx, args) => {
-    const url = await ctx.storage.getUrl(args.storageId);
-    if (!url) throw new ConvexError('Failed to get download url');
-
-    return url;
-  },
-});
-
-export const updateUser = mutation({
+export const updateUser = internalMutation({
   args: {
-    data: v.object({
-      name: v.optional(v.string()),
-      profileImg: v.optional(v.string()),
-    }),
+    name: v.string(),
+    email: v.string(),
+    defaultImg: v.string(),
+    clerkId: v.string(),
   },
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx);
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkIdentifier', args.clerkId))
+      .first();
 
-    if (!user) throw new ConvexError('Must be logged in');
+    if (!user) throw new ConvexError('User not found');
 
-    const data = args.data.name
-      ? { name: args.data.name }
-      : { profileImg: args.data.profileImg };
-
-    await ctx.db.patch(user._id, data);
+    await ctx.db.patch(user._id, {
+      name: args.name,
+      email: args.email,
+      profileImg: args.defaultImg,
+    });
   },
 });
 
-export const deleteUser = mutation({
-  args: {},
+export const deleteUser = internalMutation({
+  args: { clerkId: v.string() },
   handler: async (ctx, args) => {
-    const user = await isAuth(ctx);
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkIdentifier', args.clerkId))
+      .first();
 
-    if (!user) throw new ConvexError('Must be logged in');
+    if (!user) throw new ConvexError('User not found');
 
     //Delete user from DB
     await ctx.db.delete(user._id);
@@ -83,7 +75,5 @@ export const deleteUser = mutation({
       .collect();
 
     await Promise.all(memberProjectToDelete.map(doc => ctx.db.delete(doc._id)));
-
-    return user.clerkIdentifier;
   },
 });
