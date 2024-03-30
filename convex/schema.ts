@@ -56,6 +56,7 @@ export default defineSchema({
       v.literal('reference')
     ),
     data: v.string(),
+    image: v.optional(v.string()),
     sendBy: v.id('users'),
     projectId: v.id('projects'),
     parentMessageId: v.optional(v.id('messages')),

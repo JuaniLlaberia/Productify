@@ -1,8 +1,25 @@
+'use client';
+
 import Image from 'next/image';
+import Link from 'next/link';
+import { HiOutlineTrash } from 'react-icons/hi2';
+import { useMutation } from 'convex/react';
 
 import { formatDate, formatDateDistance } from '@/utils/formatDate';
 import { Doc } from '../../../../../convex/_generated/dataModel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { api } from '../../../../../convex/_generated/api';
 
 type MessageType = {
   messageData: Doc<'messages'>;
@@ -11,8 +28,10 @@ type MessageType = {
 };
 
 const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
-  const { _id: messageId, data, _creationTime, type } = messageData;
+  const { _id: messageId, data, _creationTime, image, projectId } = messageData;
   const { profileImg, name } = senderData;
+
+  const deleteMessage = useMutation(api.messages.deleteMessage);
 
   return (
     <li
@@ -55,19 +74,49 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
             !isFirstInGroup ? 'ml-12' : ''
           } max-w-[75dvw] break-words overflow-hidden xl:text-lg`}
         >
-          {type === 'message' ? (
-            data
-          ) : (
-            <Image
-              className='mt-3 rounded-md'
-              alt='image sent in message'
-              src={data}
-              width={225}
-              height={150}
-            />
-          )}
+          {image ? (
+            <Link href={image} target='_blank'>
+              <Image
+                className='mt-3 rounded-md'
+                alt='image sent in message'
+                src={image}
+                width={150}
+                height={100}
+              />
+            </Link>
+          ) : null}
+          {data ? data : null}
         </p>
       </div>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className='hidden group-hover:block absolute right-5 top-1 text-text-2 hover:text-text-danger'>
+            <HiOutlineTrash />
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader className='text-start'>
+            <AlertDialogTitle>Delete Message</AlertDialogTitle>
+            <AlertDialogDescription className='text-text-2'>
+              Are you sure you want to delete this message?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className='flex flex-row justify-between'>
+            <AlertDialogCancel asChild>
+              <Button variant='ghost' size='sm'>
+                Cancel
+              </Button>
+            </AlertDialogCancel>
+            <Button
+              variant='destructive'
+              size='sm'
+              onClick={() => deleteMessage({ projectId, messageId })}
+            >
+              Confirm
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </li>
   );
 };

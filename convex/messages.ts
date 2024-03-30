@@ -41,6 +41,7 @@ export const getMessages = query({
 export const sendMessage = mutation({
   args: {
     data: v.string(),
+    image: v.optional(v.string()),
     projectId: v.id('projects'),
     parentMessageId: v.optional(v.id('messages')),
     type: v.union(v.literal('message'), v.literal('image')),
@@ -52,7 +53,6 @@ export const sendMessage = mutation({
 
     await ctx.db.insert('messages', {
       ...args,
-
       sendBy: hasAccess._id,
     });
   },
@@ -67,6 +67,8 @@ export const deleteMessage = mutation({
     const hasAccess = await accessToProject(ctx, args.projectId);
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
+
+    //If message contains image => delete image from bucket
 
     await ctx.db.delete(args.messageId);
   },

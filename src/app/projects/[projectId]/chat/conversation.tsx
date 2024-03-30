@@ -4,6 +4,7 @@ import { usePaginatedQuery } from 'convex/react';
 import { Fragment } from 'react';
 import { ClipLoader } from 'react-spinners';
 import { useTheme } from 'next-themes';
+import { HiOutlineEnvelope } from 'react-icons/hi2';
 
 import Message from './message';
 import MessageLoader from './message-loader';
@@ -34,7 +35,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
     );
 
   return (
-    <ul className='flex-1 w-full overflow-y-auto'>
+    <ul className='flex-1 w-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-corner-transparent scrollbar-thumb-background-3'>
       <div className='flex items-center justify-center'>
         {status === 'CanLoadMore' ? (
           <Button
@@ -60,6 +61,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
           <Fragment key={i}>
             {group.map((message, j) => (
               <Message
+                key={message._id}
                 messageData={message}
                 senderData={message.sendBy}
                 isFirstInGroup={j === 0}
@@ -68,9 +70,15 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
           </Fragment>
         ))
       ) : (
-        <p className='flex justify-center items-center h-full text-sm text-center text-text-2'>
-          No messages yet
-        </p>
+        <div className='flex flex-col h-full items-center justify-center'>
+          <span className='p-4 bg-background-hover-2 text-text-2 rounded-full mb-2'>
+            <HiOutlineEnvelope size={30} />
+          </span>
+          <h2 className='text-xl text-text-1 font-medium'>No messages yet</h2>
+          <p className='text-text-2 text-sm'>
+            Be the first one to start the conversation
+          </p>
+        </div>
       )}
     </ul>
   );
