@@ -16,9 +16,9 @@ const ProjectsPage = async () => {
   );
 
   return (
-    <main>
+    <main className='px-2'>
       <NavbarProjects />
-      <header className='flex items-center justify-between p-2 px-3 my-3'>
+      <header className='flex items-center justify-between p-2 px-3 lg:px-24 my-3'>
         <h1 className='text-2xl text-text-1 font-semibold'>
           Projects {projects.length > 0 ? `(${projects?.length})` : ''}
         </h1>
@@ -30,14 +30,11 @@ const ProjectsPage = async () => {
           <span className='ml-3'>New project</span>
         </Link>
       </header>
-      <section>
+      <section className='lg:px-24'>
         {projects.length > 0 ? (
-          <ul className='flex flex-col gap-2.5 p-3'>
+          <ul className='flex flex-col gap-2 w-full mt-3 lg:grid lg:grid-cols-3 lg:gap-4'>
             {projects.map(project => (
-              <ProjectItem
-                key={project._id}
-                project={project as ExtendedDoc}
-              />
+              <ProjectItem key={project._id} project={project as ExtendedDoc} />
             ))}
           </ul>
         ) : (
