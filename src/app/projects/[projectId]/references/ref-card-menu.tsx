@@ -47,7 +47,7 @@ const RefCardMenu = ({
           }
         >
           <HiOutlineStar className='mr-2 h-4 w-4' />
-          <span>Pin to top</span>
+          <span>{isPinned ? 'Unpin' : 'Pin'} to top</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
