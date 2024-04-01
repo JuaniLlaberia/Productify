@@ -101,4 +101,10 @@ export default defineSchema({
       v.literal('p-4')
     ),
   }).index('by_projectId', ['projectId']),
+
+  notifications: defineTable({
+    userId: v.id('users'), //Recipient
+    projectId: v.id('projects'), //Where is comming from
+    type: v.union(v.literal('invitation'), v.literal('task')),
+  }).index('by_user', ['userId']),
 });
