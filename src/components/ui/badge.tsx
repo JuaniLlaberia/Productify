@@ -1,4 +1,11 @@
-type ColorsType = 'red' | 'green' | 'blue' | 'gray' | 'purple';
+export type ColorsType =
+  | 'red'
+  | 'green'
+  | 'blue'
+  | 'gray'
+  | 'purple'
+  | 'orange'
+  | 'yellow';
 
 type BadgeType = {
   text: string;
@@ -15,6 +22,10 @@ const getColorClass = (color: ColorsType) => {
     gray: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border-gray-800 dark:border-gray-300',
     purple:
       'bg-purple-100 text-purple-800 dark:bg-purple-700 dark:text-purple-300 border-purple-800 dark:border-gray-300',
+    orange:
+      'bg-orange-100 text-orange-800 dark:bg-orange-700 dark:text-orange-300 border-orange-800 dark:border-gray-300',
+    yellow:
+      'bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-300 border-yellow-800 dark:border-gray-300',
   };
 
   return colorClasses[color] || colorClasses.gray;
