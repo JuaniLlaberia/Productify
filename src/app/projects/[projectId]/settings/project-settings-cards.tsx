@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
+import { useRouter } from 'next/navigation';
 
 import SettingsCard from '@/components/settings-card';
-import FormBtn from '@/components/form-btn';
 import Badge from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
@@ -17,114 +17,224 @@ import {
 } from '@/components/ui/select';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import { api } from '../../../../../convex/_generated/api';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 type ProjectSettingsCardsType = {
   projectId: Id<'projects'>;
 };
 
 const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
+  const userRole = useQuery(api.projects.getUserRole, { projectId });
   const projectData = useQuery(api.projects.getProject, {
     projectId,
   });
+
+  const router = useRouter();
+
+  const updateProject = useMutation(api.projects.updateProject);
+  const getUploadUrl = useMutation(api.utils.generateUploadUrl);
+  const getDownloadUrl = useMutation(api.utils.generateDownloadUrl);
+  const deleteProject = useMutation(api.projects.deleteProject);
+  const leaveProject = useMutation(api.projects.leaveProject);
+
+  const isOwner = userRole === 'owner';
 
   return (
     <ul className='flex flex-col gap-4'>
       <SettingsCard
         title='Project Name'
         description='Please enter the project name that all memebers are able to see.'
+        footerComment='Min 3 and Max 30 characters'
         formChild={
-          <form>
-            <Input
-              name='name'
-              className='bg-background-2'
-              defaultValue={projectData?.name}
-              type='text'
-              placeholder='Front-End Team'
-            />
-            <div className='flex items-center justify-end mt-2'>
-              <FormBtn size='sm'>Save</FormBtn>
-            </div>
-          </form>
+          <Input
+            name='name'
+            className='bg-background-2'
+            defaultValue={projectData?.name}
+            type='text'
+            minLength={3}
+            maxLength={30}
+            placeholder='e.g. Front-End Team'
+            onBlur={e =>
+              updateProject({
+                projectId,
+                projectData: { name: e.target.value },
+              })
+            }
+          />
         }
       />
+
       <SettingsCard
         title='Project Status'
-        description='Update the status of your project depending on what stage of the developing proccess is.'
+        description='Set the stage of your project.'
+        footerComment={`It helps organize the status of your projects.`}
         formChild={
-          <form>
-            <Select defaultValue={projectData?.status} name='status' required>
-              <SelectTrigger id='status' className='bg-background-2'>
-                <SelectValue placeholder='Select status' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='active'>
-                  <Badge text='Active' color='green' decorated />
-                </SelectItem>
-                <SelectItem value='mantainance'>
-                  <Badge text='Mantainance' color='red' decorated />
-                </SelectItem>
-                <SelectItem value='inactive'>
-                  <Badge text='Inactive' color='blue' decorated />
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <div className='flex items-center justify-end mt-2'>
-              <FormBtn size='sm'>Save</FormBtn>
-            </div>
-          </form>
+          <Select
+            onValueChange={val =>
+              updateProject({
+                projectId,
+                projectData: {
+                  status: val as 'active' | 'inactive' | 'mantainance',
+                },
+              })
+            }
+            value={projectData?.status}
+          >
+            <SelectTrigger
+              id='status'
+              className='bg-background-2'
+            >
+              <SelectValue placeholder='Select status' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='active'>
+                <Badge
+                  text='Active'
+                  color='green'
+                  decorated
+                />
+              </SelectItem>
+              <SelectItem value='mantainance'>
+                <Badge
+                  text='Mantainance'
+                  color='red'
+                  decorated
+                />
+              </SelectItem>
+              <SelectItem value='inactive'>
+                <Badge
+                  text='Inactive'
+                  color='blue'
+                  decorated
+                />
+              </SelectItem>
+            </SelectContent>
+          </Select>
         }
       />
+
       <SettingsCard
         title='Avatar'
         description='Upload a custom image or emoji from your files.'
-        formChild={
-          <form className='flex items-center justify-between'>
-            <div>
-              <Label
-                htmlFor='profileImg'
-                className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
-              >
-                <Avatar className='size-14'>
-                  <AvatarImage src={projectData?.image} />
-                  <AvatarFallback></AvatarFallback>
-                </Avatar>
-                Choose image
-              </Label>
-              <Input
-                className='hidden'
-                type='file'
-                accept='image/*'
-                id='profileImg'
-                name='profileImg'
-              />
-            </div>
-            <FormBtn size='sm'>Upload</FormBtn>
-          </form>
-        }
-      />
-      <SettingsCard
-        title='Invite Members'
-        description='Send invitations to other users to join your project.'
+        footerComment={`It's recommended to have one.`}
         formChild={
           <form>
+            <Label
+              htmlFor='profileImg'
+              className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
+            >
+              <Avatar className='size-14'>
+                <AvatarImage src={projectData?.image} />
+                <AvatarFallback className='bg-special'></AvatarFallback>
+              </Avatar>
+              Choose image
+            </Label>
             <Input
-              name='email'
-              className='bg-background-2'
-              type='text'
-              placeholder='example@email.com'
+              onChange={async e => {
+                if (!e.target.files?.[0]) return;
+
+                const uploadUrl = await getUploadUrl();
+                const response = await fetch(uploadUrl, {
+                  method: 'POST',
+                  body: e.target.files?.[0],
+                });
+
+                const { storageId } = await response.json();
+                const imageUrl = await getDownloadUrl({ storageId });
+                updateProject({ projectId, projectData: { image: imageUrl } });
+              }}
+              className='hidden'
+              type='file'
+              accept='image/*'
+              id='profileImg'
             />
-            <div className='flex items-center justify-end mt-2'>
-              <FormBtn size='sm'>Send</FormBtn>
-            </div>
           </form>
         }
       />
+
       <SettingsCard
-        title='Delete Project'
-        description='Permanently remove your project and all of its data from Profuctify.
-        This action is not reversible.'
+        title={isOwner ? 'Delete Project' : 'Leave Project'}
+        description={
+          isOwner
+            ? `Permanently remove your project and all of its data from Profuctify.
+        This action is not reversible.`
+            : `Leaving the project will not delete any data realted to you or to the project.`
+        }
         danger
-        formChild={<></>}
+        formChild={
+          <>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <div className='flex justify-end'>
+                  <Button
+                    size='sm'
+                    variant='destructive'
+                  >
+                    {isOwner ? 'Delete project' : 'Leave project'}
+                  </Button>
+                </div>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                {isOwner ? (
+                  <AlertDialogHeader className='text-start'>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription className='text-text-2'>
+                      This will permanently remove this project and all of it's
+                      information.
+                      <span className='text-text-1 font-semibold'>
+                        This action is not reversible.
+                      </span>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                ) : (
+                  <AlertDialogHeader className='text-start'>
+                    <AlertDialogTitle>Leave Project</AlertDialogTitle>
+                    <AlertDialogDescription className='text-text-2'>
+                      You are leaving this project.
+                      <span className='text-text-1 font-semibold'>
+                        You area able to re-join the project.
+                      </span>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                )}
+                <AlertDialogFooter className='flex flex-row justify-between'>
+                  <AlertDialogCancel asChild>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                    >
+                      Cancel
+                    </Button>
+                  </AlertDialogCancel>
+                  <Button
+                    variant='destructive'
+                    size='sm'
+                    onClick={() => {
+                      if (isOwner) {
+                        deleteProject({ projectId });
+                      } else {
+                        leaveProject({ projectId });
+                      }
+                      router.push('/projects');
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        }
       />
     </ul>
   );

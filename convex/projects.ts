@@ -129,6 +129,31 @@ export const createProject = mutation({
   },
 });
 
+export const updateProject = mutation({
+  args: {
+    projectId: v.id('projects'),
+    projectData: v.object({
+      name: v.optional(v.string()),
+      status: v.optional(
+        v.union(
+          v.literal('active'),
+          v.literal('inactive'),
+          v.literal('mantainance')
+        )
+      ),
+      image: v.optional(v.string()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const isAdmin = adminOnly(ctx, args.projectId);
+
+    if (!isAdmin)
+      throw new ConvexError('You have no permission to perform this action');
+
+    await ctx.db.patch(args.projectId, { ...args.projectData });
+  },
+});
+
 export const deleteProject = mutation({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
@@ -137,7 +162,18 @@ export const deleteProject = mutation({
     if (!isAdmin)
       throw new ConvexError('You have no permission to perform this action');
 
+    //Delete project information
     await ctx.db.delete(args.projectId);
+
+    //Delete all member-project relation
+    const userProjects = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
+      .collect();
+
+    await Promise.all(
+      userProjects.map(async project => await ctx.db.delete(project._id))
+    );
   },
 });
 
@@ -215,6 +251,50 @@ export const getMembers = query({
         };
       })
     );
+  },
+});
+
+export const getUserRole = query({
+  args: {
+    projectId: v.id('projects'),
+  },
+  handler: async (ctx, args) => {
+    const access = await accessToProject(ctx, args.projectId);
+
+    if (!access) return null;
+
+    const member = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId_and_userId', q =>
+        q.eq('projectId', args.projectId).eq('userId', access._id)
+      )
+      .first();
+
+    return member?.role;
+  },
+});
+
+export const updateRole = mutation({
+  args: {
+    projectId: v.id('projects'),
+    userId: v.id('users'),
+    role: v.union(v.literal('admin'), v.literal('member')),
+  },
+  handler: async (ctx, args) => {
+    const hasAccess = await adminOnly(ctx, args.projectId);
+
+    if (!hasAccess) throw new ConvexError('You can not perform this action');
+
+    const member = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId_and_userId', q =>
+        q.eq('projectId', args.projectId).eq('userId', args.userId)
+      )
+      .first();
+
+    if (!member) throw new ConvexError('User not found');
+
+    await ctx.db.patch(member?._id, { role: args.role });
   },
 });
 
