@@ -36,7 +36,7 @@ const ReportsForm = ({
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(reportsSchema),
     defaultValues: editMode ? prevData : {},
@@ -45,19 +45,22 @@ const ReportsForm = ({
   const createBugReport = useMutation(api.reports.createReport);
   const updateBugReport = useMutation(api.reports.updateReport);
 
-  const submit = handleSubmit(data => {
+  const submit = handleSubmit(async data => {
     if (editMode) {
-      updateBugReport({
+      await updateBugReport({
         projectId,
         reportData: { ...data, _id: prevData?._id! },
       });
     } else {
-      createBugReport({ projectId, reportData: { ...data } });
+      await createBugReport({ projectId, reportData: { ...data } });
     }
   });
 
   return (
-    <form onSubmit={submit} className='flex flex-col h-full'>
+    <form
+      onSubmit={submit}
+      className='flex flex-col h-full'
+    >
       <div className='flex-1'>
         <Label htmlFor='name'>Name</Label>
         <Input
@@ -73,7 +76,11 @@ const ReportsForm = ({
           defaultValue={prevData?.type}
           onValueChange={val => setValue('type', val)}
         >
-          <SelectTrigger id='type' icon={<HiOutlineTag />} className='my-2'>
+          <SelectTrigger
+            id='type'
+            icon={<HiOutlineTag />}
+            className='my-2'
+          >
             <SelectValue placeholder='Select a type' />
           </SelectTrigger>
           <SelectContent>
@@ -86,7 +93,7 @@ const ReportsForm = ({
         </Select>
         <Error error={errors?.type?.message as string} />
 
-        <Label htmlFor='importance'>Importance</Label>
+        <Label htmlFor='importance'>Priority Type</Label>
         <Select
           defaultValue={prevData?.importance}
           onValueChange={val => setValue('importance', val)}
@@ -96,12 +103,14 @@ const ReportsForm = ({
             icon={<HiOutlineCalendarDays />}
             className='my-2'
           >
-            <SelectValue placeholder='Select importance' />
+            <SelectValue placeholder='Select priority' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='urgent'>Urgent</SelectItem>
-            <SelectItem value='important'>Important</SelectItem>
-            <SelectItem value='moderate'>Moderate</SelectItem>
+            <SelectItem value='p-0'>P-0 (Critical)</SelectItem>
+            <SelectItem value='p-1'>P-1 (High)</SelectItem>
+            <SelectItem value='p-2'>P-2 (Medium)</SelectItem>
+            <SelectItem value='p-3'>P-3 (Low)</SelectItem>
+            <SelectItem value='p-4'>P-4 (Minimal)</SelectItem>
           </SelectContent>
         </Select>
         <Error error={errors?.importance?.message as string} />
@@ -115,7 +124,12 @@ const ReportsForm = ({
         <Error error={errors?.description?.message as string} />
       </div>
 
-      <Button className='mt-4 mb-8 w-full'>
+      <Button
+        className='mt-4 mb-8 w-full'
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
+        aria-disabled={isSubmitting}
+      >
         {editMode ? 'Update' : 'Add'}
       </Button>
     </form>

@@ -11,7 +11,7 @@ export const TaskFormSchema = z.object({
   tag: z.enum(['feature', 'fix', 'refactor', 'test', 'deploy']),
   status: z.enum(['pending', 'progress', 'finished']),
   assignedTo: z.string().min(1, 'Missing require value/s'),
-  importance: z.enum(['urgent', 'important', 'moderate']),
+  importance: z.enum(['p-0', 'p-1', 'p-2', 'p-3', 'p-4']),
 });
 
 export const MessageSchema = z.object({
@@ -31,6 +31,6 @@ export const ReferenceSchema = z.object({
 export const reportsSchema = z.object({
   name: z.string().min(1, 'Missing bug report name'),
   type: z.enum(['ui/ux', 'functional', 'performance', 'security', 'other']),
-  importance: z.enum(['urgent', 'important', 'moderate']),
+  importance: z.enum(['p-0', 'p-1', 'p-2', 'p-3', 'p-4']),
   description: z.string().min(1, 'Missing bug report description'),
 });

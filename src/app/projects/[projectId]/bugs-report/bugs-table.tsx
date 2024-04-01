@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 import BugsItemMenu from './bugs-item-menu';
+import { priorityColor } from '../tasks/task-card';
 
 type BugsTableType = {
   projectId: Id<'projects'>;
@@ -41,22 +42,27 @@ const BugsTable = ({ projectId }: BugsTableType) => {
             <TableHead className='w-full flex'></TableHead>
           </TableRow>
         </TableHeader>
-
         {results.length > 0 ? (
           <TableBody>
             {results.map(report => (
               <TableRow key={report._id}>
                 <TableCell className='w-[150px] lg:w-[200px]'>
-                  {report.name}
+                  <p className='line-clamp-3'>{report.name}</p>
                 </TableCell>
                 <TableCell>
                   <div className='flex'>
-                    <Badge text={report.type} color='purple' />
+                    <Badge
+                      text={report.type}
+                      color='purple'
+                    />
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className='flex'>
-                    <Badge text={report.importance} color='red' />
+                    <Badge
+                      text={report.importance}
+                      color={priorityColor(report.importance)}
+                    />
                   </div>
                 </TableCell>
 
@@ -71,18 +77,38 @@ const BugsTable = ({ projectId }: BugsTableType) => {
             ))}
           </TableBody>
         ) : (
-          <TableBody>Empty</TableBody>
+          <TableRow>
+            <TableCell
+              colSpan={10}
+              className='h-24 text-center text-text-2'
+            >
+              No results.
+            </TableCell>
+          </TableRow>
         )}
       </Table>
       <footer className='w-full md:px-4 flex items-center space-x-2 py-4'>
         <div className='w-full flex justify-between md:justify-end gap-3 space-x-2'>
-          <Button variant='ghost' size='sm'>
-            <HiOutlineArrowLeft size={16} className='mr-2' />
+          <Button
+            variant='ghost'
+            size='sm'
+          >
+            <HiOutlineArrowLeft
+              size={16}
+              className='mr-2'
+            />
             Previous
           </Button>
-          <Button variant='ghost' size='sm'>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={() => loadMore(5)}
+          >
             Next
-            <HiOutlineArrowRight size={16} className='ml-2' />
+            <HiOutlineArrowRight
+              size={16}
+              className='ml-2'
+            />
           </Button>
         </div>
       </footer>

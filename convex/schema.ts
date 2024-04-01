@@ -40,9 +40,11 @@ export default defineSchema({
       v.literal('deploy')
     ),
     importance: v.union(
-      v.literal('urgent'),
-      v.literal('important'),
-      v.literal('moderate')
+      v.literal('p-0'),
+      v.literal('p-1'),
+      v.literal('p-2'),
+      v.literal('p-3'),
+      v.literal('p-4')
     ),
     assignedTo: v.id('users'),
   })
@@ -50,23 +52,17 @@ export default defineSchema({
     .index('by_user_due', ['assignedTo', 'importance']),
 
   messages: defineTable({
-    type: v.union(
-      v.literal('message'),
-      v.literal('image'),
-      v.literal('reference')
-    ),
+    type: v.union(v.literal('message'), v.literal('image')),
     data: v.string(),
     image: v.optional(v.string()),
     sendBy: v.id('users'),
     projectId: v.id('projects'),
-    parentMessageId: v.optional(v.id('messages')),
   }).index('by_projectId', ['projectId']),
 
   references: defineTable({
     name: v.string(),
     projectId: v.id('projects'),
     type: v.union(
-      //Used for displaying custom icons
       v.literal('github'),
       v.literal('gitlab'),
       v.literal('stackoverflow'),
@@ -98,9 +94,11 @@ export default defineSchema({
       v.literal('other')
     ),
     importance: v.union(
-      v.literal('urgent'),
-      v.literal('important'),
-      v.literal('moderate')
+      v.literal('p-0'),
+      v.literal('p-1'),
+      v.literal('p-2'),
+      v.literal('p-3'),
+      v.literal('p-4')
     ),
   }).index('by_projectId', ['projectId']),
 });

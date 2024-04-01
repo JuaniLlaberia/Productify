@@ -21,9 +21,11 @@ export const taskSchemaTypes = {
     v.literal('finished')
   ),
   importance: v.union(
-    v.literal('urgent'),
-    v.literal('important'),
-    v.literal('moderate')
+    v.literal('p-0'),
+    v.literal('p-1'),
+    v.literal('p-2'),
+    v.literal('p-3'),
+    v.literal('p-4')
   ),
   assignedTo: v.id('users'),
 };

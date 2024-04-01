@@ -1,6 +1,6 @@
 import TaskForm from './task-form';
 import TaskCardMenu from './task-card-menu';
-import Badge from '@/components/ui/badge';
+import Badge, { ColorsType } from '@/components/ui/badge';
 import { Doc } from '../../../../../convex/_generated/dataModel';
 import {
   Sheet,
@@ -9,6 +9,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+
+export const priorityColor = (
+  priority: 'p-0' | 'p-1' | 'p-2' | 'p-3' | 'p-4'
+): ColorsType => {
+  switch (priority) {
+    case 'p-0':
+      return 'red';
+    case 'p-1':
+      return 'orange';
+    case 'p-2':
+      return 'yellow';
+    case 'p-3':
+    case 'p-4':
+    default:
+      return 'gray';
+  }
+};
 
 const TaskCard = ({ taskInfo }: { taskInfo: Doc<'tasks'> }) => {
   const {
@@ -34,7 +51,7 @@ const TaskCard = ({ taskInfo }: { taskInfo: Doc<'tasks'> }) => {
               />
               <Badge
                 text={importance}
-                color='gray'
+                color={priorityColor(importance)}
               />
             </div>
           </>
