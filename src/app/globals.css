@@ -61,4 +61,6 @@
 em-emoji-picker {
   height: 400px;
   --rgb-accent: 255, 154, 39;
+  border: 1px solid var(--border);
+  margin-left: 5px;
 }

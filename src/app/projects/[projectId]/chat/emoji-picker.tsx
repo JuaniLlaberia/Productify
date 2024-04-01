@@ -22,7 +22,7 @@ const EmojiPicker = ({
       <PopoverTrigger className='p-2 hover:bg-background-hover-2 rounded-md cursor-pointer'>
         <HiOutlineFaceSmile size={24} />
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent asChild>
         <Picker
           onEmojiSelect={handleEmojiPick}
           searchPosition='top'
