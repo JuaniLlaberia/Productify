@@ -51,116 +51,123 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
 
   return (
     <ul className='flex flex-col gap-4'>
-      <SettingsCard
-        title='Project Name'
-        description='Please enter the project name that all memebers are able to see.'
-        footerComment='Min 3 and Max 30 characters'
-        formChild={
-          <Input
-            name='name'
-            className='bg-background-2'
-            defaultValue={projectData?.name}
-            type='text'
-            minLength={3}
-            maxLength={30}
-            placeholder='e.g. Front-End Team'
-            onBlur={e =>
-              updateProject({
-                projectId,
-                projectData: { name: e.target.value },
-              })
+      {userRole !== 'member' ? (
+        <>
+          <SettingsCard
+            title='Project Name'
+            description='Please enter the project name that all memebers are able to see.'
+            footerComment='Min 3 and Max 30 characters'
+            formChild={
+              <Input
+                name='name'
+                className='bg-background-2'
+                defaultValue={projectData?.name}
+                type='text'
+                minLength={3}
+                maxLength={30}
+                placeholder='e.g. Front-End Team'
+                onBlur={e =>
+                  updateProject({
+                    projectId,
+                    projectData: { name: e.target.value },
+                  })
+                }
+              />
             }
           />
-        }
-      />
 
-      <SettingsCard
-        title='Project Status'
-        description='Set the stage of your project.'
-        footerComment={`It helps organize the status of your projects.`}
-        formChild={
-          <Select
-            onValueChange={val =>
-              updateProject({
-                projectId,
-                projectData: {
-                  status: val as 'active' | 'inactive' | 'mantainance',
-                },
-              })
+          <SettingsCard
+            title='Project Status'
+            description='Set the stage of your project.'
+            footerComment={`It helps organize the status of your projects.`}
+            formChild={
+              <Select
+                onValueChange={val =>
+                  updateProject({
+                    projectId,
+                    projectData: {
+                      status: val as 'active' | 'inactive' | 'mantainance',
+                    },
+                  })
+                }
+                value={projectData?.status}
+              >
+                <SelectTrigger
+                  id='status'
+                  className='bg-background-2'
+                >
+                  <SelectValue placeholder='Select status' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='active'>
+                    <Badge
+                      text='Active'
+                      color='green'
+                      decorated
+                    />
+                  </SelectItem>
+                  <SelectItem value='mantainance'>
+                    <Badge
+                      text='Mantainance'
+                      color='red'
+                      decorated
+                    />
+                  </SelectItem>
+                  <SelectItem value='inactive'>
+                    <Badge
+                      text='Inactive'
+                      color='blue'
+                      decorated
+                    />
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             }
-            value={projectData?.status}
-          >
-            <SelectTrigger
-              id='status'
-              className='bg-background-2'
-            >
-              <SelectValue placeholder='Select status' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='active'>
-                <Badge
-                  text='Active'
-                  color='green'
-                  decorated
-                />
-              </SelectItem>
-              <SelectItem value='mantainance'>
-                <Badge
-                  text='Mantainance'
-                  color='red'
-                  decorated
-                />
-              </SelectItem>
-              <SelectItem value='inactive'>
-                <Badge
-                  text='Inactive'
-                  color='blue'
-                  decorated
-                />
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        }
-      />
+          />
 
-      <SettingsCard
-        title='Avatar'
-        description='Upload a custom image or emoji from your files.'
-        footerComment={`It's recommended to have one.`}
-        formChild={
-          <form>
-            <Label
-              htmlFor='profileImg'
-              className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
-            >
-              <Avatar className='size-14'>
-                <AvatarImage src={projectData?.image} />
-                <AvatarFallback className='bg-special'></AvatarFallback>
-              </Avatar>
-              Choose image
-            </Label>
-            <Input
-              onChange={async e => {
-                if (!e.target.files?.[0]) return;
+          <SettingsCard
+            title='Avatar'
+            description='Upload a custom image or emoji from your files.'
+            footerComment={`It's recommended to have one.`}
+            formChild={
+              <form>
+                <Label
+                  htmlFor='profileImg'
+                  className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
+                >
+                  <Avatar className='size-14 rounded-md'>
+                    <AvatarImage src={projectData?.image} />
+                    <AvatarFallback className='bg-special'></AvatarFallback>
+                  </Avatar>
+                  Choose image
+                </Label>
+                <Input
+                  onChange={async e => {
+                    if (!e.target.files?.[0]) return;
 
-                const uploadUrl = await getUploadUrl();
-                const response = await fetch(uploadUrl, {
-                  method: 'POST',
-                  body: e.target.files?.[0],
-                });
+                    const uploadUrl = await getUploadUrl();
+                    const response = await fetch(uploadUrl, {
+                      method: 'POST',
+                      body: e.target.files?.[0],
+                    });
 
-                const { storageId } = await response.json();
-                const imageUrl = await getDownloadUrl({ storageId });
-                updateProject({ projectId, projectData: { image: imageUrl } });
-              }}
-              className='hidden'
-              type='file'
-              accept='image/*'
-              id='profileImg'
-            />
-          </form>
-        }
-      />
+                    const { storageId } = await response.json();
+                    const imageUrl = await getDownloadUrl({ storageId });
+                    updateProject({
+                      projectId,
+                      projectData: { image: imageUrl },
+                    });
+                  }}
+                  className='hidden'
+                  type='file'
+                  accept='image/*'
+                  id='profileImg'
+                />
+              </form>
+            }
+          />
+        </>
+      ) : null}
 
       <SettingsCard
         title={isOwner ? 'Delete Project' : 'Leave Project'}
