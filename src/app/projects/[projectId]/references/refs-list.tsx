@@ -1,17 +1,21 @@
 'use client';
 
 import { useQuery } from 'convex/react';
+import { useState } from 'react';
+import { HiOutlineLink, HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
 import RefCard from './ref-card';
 import { api } from '../../../../../convex/_generated/api';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import { Skeleton } from '@/components/ui/skeleton';
-import { HiOutlineLink } from 'react-icons/hi2';
+import { Input } from '@/components/ui/input';
 
 const RefsList = ({ projectId }: { projectId: string }) => {
   const references = useQuery(api.references.getReferences, {
     projectId: projectId as Id<'projects'>,
   });
+
+  const [filter, setFilter] = useState('');
 
   if (!references)
     return (
@@ -24,11 +28,25 @@ const RefsList = ({ projectId }: { projectId: string }) => {
       </section>
     );
 
+  const filteredReferences = references.filter(
+    ref =>
+      ref.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) ||
+      ref.type.includes(filter.toLocaleLowerCase())
+  );
+
   return (
     <>
-      {references.length > 0 ? (
+      <section className='w-full md:flex md:items-center md:justify-end'>
+        <Input
+          onChange={e => setFilter(e.target.value)}
+          className='w-full'
+          icon={<HiOutlineMagnifyingGlass />}
+          placeholder='Search by reference name'
+        />
+      </section>
+      {filteredReferences.length > 0 ? (
         <ul className='flex flex-col gap-2 w-full mt-3 lg:grid lg:grid-cols-3 lg:gap-4'>
-          {references.map(reference => (
+          {filteredReferences.map(reference => (
             <RefCard
               key={reference._id}
               referenceData={reference}
