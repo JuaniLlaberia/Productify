@@ -30,7 +30,10 @@ export default function RootLayout({
         >
           <ConvexClientProvider>{children}</ConvexClientProvider>
         </ThemeProvider>
-        <Toaster />
+        <Toaster
+          expand={true}
+          richColors
+        />
       </body>
     </html>
   );

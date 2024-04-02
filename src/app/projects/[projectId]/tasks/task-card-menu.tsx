@@ -6,6 +6,8 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +36,7 @@ type CardMenuType = {
 };
 
 const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
+  const [isLoading, setIsLoading] = useState(false);
   const deleteTask = useMutation(api.tasks.deleteTask);
 
   return (
@@ -59,7 +62,10 @@ const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
             </SheetTrigger>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className='text-text-danger' asChild>
+          <DropdownMenuItem
+            className='text-text-danger'
+            asChild
+          >
             <AlertDialogTrigger className='w-full'>
               <>
                 <HiOutlineTrash className='mr-2 h-4 w-4' />
@@ -81,14 +87,28 @@ const TaskCardMenu = ({ projectId, taskId }: CardMenuType) => {
         </AlertDialogHeader>
         <AlertDialogFooter className='flex flex-row justify-between'>
           <AlertDialogCancel asChild>
-            <Button variant='ghost' size='sm'>
+            <Button
+              variant='ghost'
+              size='sm'
+            >
               Cancel
             </Button>
           </AlertDialogCancel>
           <Button
+            isLoading={isLoading}
             variant='destructive'
             size='sm'
-            onClick={() => deleteTask({ projectId, taskId })}
+            onClick={async () => {
+              try {
+                setIsLoading(true);
+                await deleteTask({ projectId, taskId });
+                toast.success('Task deleted');
+              } catch (err) {
+                toast.error('Failed to delete task');
+              } finally {
+                setIsLoading(false);
+              }
+            }}
           >
             Confirm
           </Button>

@@ -9,6 +9,7 @@ import {
 import { useMutation, useQuery } from 'convex/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
 import Error from '@/components/ui/error-form';
 import { Label } from '@/components/ui/label';
@@ -53,10 +54,15 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
   const updateTask = useMutation(api.tasks.updateTask);
 
   const submit = handleSubmit(async data => {
-    if (editMode) {
-      await updateTask({ ...data, _id: prevData._id, projectId });
-    } else {
-      await createTask({ ...data, projectId });
+    try {
+      if (editMode) {
+        await updateTask({ ...data, _id: prevData._id, projectId });
+      } else {
+        await createTask({ ...data, projectId });
+      }
+      toast.success(`Task ${editMode ? 'updated' : 'created'} successfully`);
+    } catch (err) {
+      toast.error(`Failed to ${editMode ? 'update' : 'create'} task`);
     }
   });
 

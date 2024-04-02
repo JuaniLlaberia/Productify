@@ -7,7 +7,10 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
+import ReportsForm from './reports-form';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +30,6 @@ import {
 import { api } from '../../../../../convex/_generated/api';
 import { Doc, Id } from '../../../../../convex/_generated/dataModel';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import ReportsForm from './reports-form';
 
 type BugMenuType = {
   reportData: Doc<'reports'>;
@@ -36,6 +38,7 @@ type BugMenuType = {
 };
 
 const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
+  const [isLoading, setIsLoading] = useState(false);
   const makeTask = useMutation(api.reports.reportToTask);
   const deleteReport = useMutation(api.reports.deleteReport);
 
@@ -102,7 +105,18 @@ const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
           </AlertDialogCancel>
 
           <Button
-            onClick={() => deleteReport({ projectId, reportId })}
+            isLoading={isLoading}
+            onClick={async () => {
+              try {
+                setIsLoading(true);
+                await deleteReport({ projectId, reportId });
+                toast.success('Bug report deleted');
+              } catch (err) {
+                toast.error('Failed to delete bug report');
+              } finally {
+                setIsLoading(false);
+              }
+            }}
             variant='destructive'
             size='sm'
           >

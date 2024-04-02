@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import Error from '@/components/ui/error-form';
 import { Input } from '../../components/ui/input';
@@ -25,9 +26,14 @@ const NewProjectForm = () => {
   const createProject = useMutation(api.projects.createProject);
 
   const submit = handleSubmit(async data => {
-    const projectId = await createProject({ name: data.name });
+    try {
+      const projectId = await createProject({ name: data.name });
 
-    router.push(`/projects/${projectId}/dashboard`);
+      router.push(`/projects/${projectId}/dashboard`);
+      toast.success('Project created successfully');
+    } catch (err) {
+      toast.error('Failed to craete new project');
+    }
   });
 
   return (

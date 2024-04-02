@@ -6,6 +6,8 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 import {
   DropdownMenuContent,
@@ -35,6 +37,8 @@ const RefCardMenu = ({
   projectId: Id<'projects'>;
   isPinned: boolean;
 }) => {
+  const [isLoading, setIsloading] = useState(false);
+
   const deleteReference = useMutation(api.references.deleteReference);
   const pinReference = useMutation(api.references.togglePin);
 
@@ -57,7 +61,10 @@ const RefCardMenu = ({
           </SheetTrigger>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className='text-text-danger' asChild>
+        <DropdownMenuItem
+          className='text-text-danger'
+          asChild
+        >
           <AlertDialogTrigger className='w-full'>
             <>
               <HiOutlineTrash className='mr-2 h-4 w-4' />
@@ -78,14 +85,28 @@ const RefCardMenu = ({
         </AlertDialogHeader>
         <AlertDialogFooter className='flex flex-row justify-between'>
           <AlertDialogCancel asChild>
-            <Button variant='ghost' size='sm'>
+            <Button
+              variant='ghost'
+              size='sm'
+            >
               Cancel
             </Button>
           </AlertDialogCancel>
           <Button
+            isLoading={isLoading}
             variant='destructive'
             size='sm'
-            onClick={() => deleteReference({ projectId, referenceId })}
+            onClick={async () => {
+              try {
+                setIsloading(true);
+                await deleteReference({ projectId, referenceId });
+                toast.success('Reference deleted');
+              } catch (err) {
+                toast.error('Failed to delete reference');
+              } finally {
+                setIsloading(false);
+              }
+            }}
           >
             Confirm
           </Button>

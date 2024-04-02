@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { HiOutlineCalendarDays, HiOutlineTag } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
+import { toast } from 'sonner';
 
 import Error from '@/components/ui/error-form';
 import { Button } from '@/components/ui/button';
@@ -46,13 +47,20 @@ const ReportsForm = ({
   const updateBugReport = useMutation(api.reports.updateReport);
 
   const submit = handleSubmit(async (data: any) => {
-    if (editMode) {
-      await updateBugReport({
-        ...data,
-        projectId,
-      });
-    } else {
-      await createBugReport({ ...data, projectId });
+    try {
+      if (editMode) {
+        await updateBugReport({
+          ...data,
+          projectId,
+        });
+      } else {
+        await createBugReport({ ...data, projectId });
+      }
+      toast.success(
+        `Bug report ${editMode ? 'updated' : 'created'} successfully`
+      );
+    } catch (err) {
+      toast.error(`Failed to ${editMode ? 'update' : 'create'} bug report`);
     }
   });
 

@@ -2,6 +2,9 @@
 
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'next/navigation';
+import { HiOutlineCodeBracket } from 'react-icons/hi2';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 import SettingsCard from '@/components/settings-card';
 import Badge from '@/components/ui/badge';
@@ -28,13 +31,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { HiOutlineCodeBracket } from 'react-icons/hi2';
 
 type ProjectSettingsCardsType = {
   projectId: Id<'projects'>;
 };
 
 const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
+  const [isLoading, setIsLoading] = useState(false);
   const userRole = useQuery(api.projects.getUserRole, { projectId });
   const projectData = useQuery(api.projects.getProject, {
     projectId,
@@ -227,15 +230,25 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
                     </Button>
                   </AlertDialogCancel>
                   <Button
+                    isLoading={isLoading}
                     variant='destructive'
                     size='sm'
-                    onClick={() => {
-                      if (isOwner) {
-                        deleteProject({ projectId });
-                      } else {
-                        leaveProject({ projectId });
+                    onClick={async () => {
+                      try {
+                        setIsLoading(true);
+                        if (isOwner) {
+                          await deleteProject({ projectId });
+                          toast.success('Project deleted successfully');
+                        } else {
+                          await leaveProject({ projectId });
+                          toast.success('You left the project successfully');
+                        }
+                      } catch (err) {
+                        toast.error('Failed to perform this action');
+                      } finally {
+                        router.push('/projects');
+                        setIsLoading(false);
                       }
-                      router.push('/projects');
                     }}
                   >
                     Confirm

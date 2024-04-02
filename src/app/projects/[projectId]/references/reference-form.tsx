@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import Error from '@/components/ui/error-form';
 import { Input } from '@/components/ui/input';
@@ -44,17 +45,24 @@ const ReferenceForm = ({
   const updateReference = useMutation(api.references.updateReference);
 
   const submit = handleSubmit(async data => {
-    if (isEditMode) {
-      await updateReference({
-        referenceData: { ...data },
-        projectId: projectId as Id<'projects'>,
-        referenceId: prevData._id,
-      });
-    } else {
-      await createReference({
-        referenceData: { ...data },
-        projectId: projectId as Id<'projects'>,
-      });
+    try {
+      if (isEditMode) {
+        await updateReference({
+          referenceData: { ...data },
+          projectId: projectId as Id<'projects'>,
+          referenceId: prevData._id,
+        });
+      } else {
+        await createReference({
+          referenceData: { ...data },
+          projectId: projectId as Id<'projects'>,
+        });
+      }
+      toast.success(
+        `Reference ${isEditMode ? 'updated' : 'created'} successfully`
+      );
+    } catch (err) {
+      toast.error(`Failed to ${isEditMode ? 'update' : 'create'} reference`);
     }
   });
 
