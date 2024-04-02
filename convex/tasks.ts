@@ -1,7 +1,10 @@
 import { ConvexError, v } from 'convex/values';
+import { omit } from 'convex-helpers';
+
 import { mutation, query } from './_generated/server';
 import { accessToProject } from './projects';
-import { Doc, Id } from './_generated/dataModel';
+import { Doc } from './_generated/dataModel';
+import { Tasks } from './schema';
 
 export const taskSchemaTypes = {
   _id: v.optional(v.string()),
@@ -58,16 +61,14 @@ export const getTasks = query({
 });
 
 export const createTask = mutation({
-  args: {
-    taskData: v.object(taskSchemaTypes),
-  },
+  args: Tasks.withoutSystemFields,
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.taskData.projectId);
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) throw new ConvexError('You do not have access');
 
     const taskId = await ctx.db.insert('tasks', {
-      ...args.taskData,
+      ...args,
     });
 
     return taskId;
@@ -75,18 +76,13 @@ export const createTask = mutation({
 });
 
 export const updateTask = mutation({
-  args: {
-    taskData: v.object(taskSchemaTypes),
-  },
+  args: { ...omit(Tasks.withSystemFields, ['_creationTime']) },
   handler: async (ctx, args) => {
-    const access = await accessToProject(ctx, args.taskData.projectId);
+    const access = await accessToProject(ctx, args.projectId);
 
     if (!access) throw new ConvexError('You do not have access');
 
-    await ctx.db.patch(
-      args.taskData._id as Id<'tasks'>,
-      args.taskData as Doc<'tasks'>
-    );
+    await ctx.db.patch(args._id, args);
   },
 });
 

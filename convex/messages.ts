@@ -1,8 +1,10 @@
 import { ConvexError, v } from 'convex/values';
 import { paginationOptsValidator } from 'convex/server';
+import { omit } from 'convex-helpers';
 
 import { mutation, query } from './_generated/server';
 import { accessToProject } from './projects';
+import { Messages } from './schema';
 
 export const getMessages = query({
   args: {
@@ -39,13 +41,8 @@ export const getMessages = query({
 });
 
 export const sendMessage = mutation({
-  args: {
-    data: v.string(),
-    image: v.optional(v.string()),
-    projectId: v.id('projects'),
-    parentMessageId: v.optional(v.id('messages')),
-    type: v.union(v.literal('message'), v.literal('image')),
-  },
+  // args: Messages.withoutSystemFields,
+  args: omit(Messages.withoutSystemFields, ['sendBy']),
   handler: async (ctx, args) => {
     const hasAccess = await accessToProject(ctx, args.projectId);
 

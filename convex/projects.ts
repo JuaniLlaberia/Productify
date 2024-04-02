@@ -3,6 +3,7 @@ import { paginationOptsValidator } from 'convex/server';
 
 import { MutationCtx, QueryCtx, mutation, query } from './_generated/server';
 import { Id } from './_generated/dataModel';
+import { ProjectMembers, Projects } from './schema';
 
 //Reusable functionalities
 export const isAuth = async (ctx: QueryCtx | MutationCtx) => {
@@ -133,14 +134,8 @@ export const updateProject = mutation({
   args: {
     projectId: v.id('projects'),
     projectData: v.object({
-      name: v.optional(v.string()),
-      status: v.optional(
-        v.union(
-          v.literal('active'),
-          v.literal('inactive'),
-          v.literal('mantainance')
-        )
-      ),
+      name: v.optional(Projects.withoutSystemFields.name),
+      status: v.optional(Projects.withoutSystemFields.status),
       image: v.optional(v.string()),
     }),
   },
@@ -244,11 +239,7 @@ export const getMembers = query({
 
     return await Promise.all(
       projectMembers.map(async member => {
-        const userData = await ctx.db.get(member.userId);
-        return {
-          ...userData,
-          role: member.role,
-        };
+        return await ctx.db.get(member.userId);
       })
     );
   },
@@ -278,7 +269,7 @@ export const updateRole = mutation({
   args: {
     projectId: v.id('projects'),
     userId: v.id('users'),
-    role: v.union(v.literal('admin'), v.literal('member')),
+    role: ProjectMembers.withoutSystemFields.role,
   },
   handler: async (ctx, args) => {
     const hasAccess = await adminOnly(ctx, args.projectId);

@@ -26,16 +26,16 @@ http.route({
           await ctx.runMutation(internal.users.createUser, {
             name: `${result.data.first_name} ${result.data.last_name}`,
             email: result.data.email_addresses[0].email_address,
-            defaultImg: result.data.image_url,
-            clerkId: result.data.id,
+            profileImg: result.data.image_url,
+            clerkIdentifier: result.data.id,
           });
           break;
         case 'user.updated':
           await ctx.runMutation(internal.users.updateUser, {
             name: `${result.data.first_name} ${result.data.last_name}`,
             email: result.data.email_addresses[0].email_address,
-            defaultImg: result.data.image_url,
-            clerkId: result.data.id,
+            profileImg: result.data.image_url,
+            clerkIdentifier: result.data.id,
           });
           break;
         case 'user.deleted':

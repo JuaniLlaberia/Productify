@@ -1,6 +1,9 @@
 import { ConvexError, v } from 'convex/values';
+import { omit } from 'convex-helpers';
+
 import { mutation, query } from './_generated/server';
 import { accessToProject } from './projects';
+import { References } from './schema';
 
 export const getReferences = query({
   args: { projectId: v.id('projects') },
@@ -21,17 +24,9 @@ export const getReferences = query({
 export const createReference = mutation({
   args: {
     projectId: v.id('projects'),
-    referenceData: v.object({
-      name: v.string(),
-      reference: v.string(),
-      type: v.union(
-        v.literal('github'),
-        v.literal('gitlab'),
-        v.literal('stackoverflow'),
-        v.literal('documentation'),
-        v.literal('other')
-      ),
-    }),
+    referenceData: v.object(
+      omit(References.withoutSystemFields, ['isPinned', 'projectId'])
+    ),
   },
   handler: async (ctx, args) => {
     const hasAccess = await accessToProject(ctx, args.projectId);
@@ -48,18 +43,7 @@ export const createReference = mutation({
 
 export const updateReference = mutation({
   args: {
-    referenceData: v.object({
-      name: v.string(),
-      reference: v.string(),
-      type: v.union(
-        v.literal('github'),
-        v.literal('gitlab'),
-        v.literal('stackoverflow'),
-        v.literal('documentation'),
-        v.literal('other')
-      ),
-      isPinned: v.boolean(),
-    }),
+    referenceData: v.object(References.withoutSystemFields),
     projectId: v.id('projects'),
     referenceId: v.id('references'),
   },
