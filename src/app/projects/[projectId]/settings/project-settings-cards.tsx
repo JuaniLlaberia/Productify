@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { HiOutlineCodeBracket } from 'react-icons/hi2';
 
 type ProjectSettingsCardsType = {
   projectId: Id<'projects'>;
@@ -137,7 +138,9 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
                 >
                   <Avatar className='size-14 rounded-md'>
                     <AvatarImage src={projectData?.image} />
-                    <AvatarFallback className='bg-special'></AvatarFallback>
+                    <AvatarFallback className='bg-background-2 border border-border-1 rounded-md text-text-2'>
+                      <HiOutlineCodeBracket size={24} />
+                    </AvatarFallback>
                   </Avatar>
                   Choose image
                 </Label>

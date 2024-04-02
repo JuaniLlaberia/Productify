@@ -1,4 +1,8 @@
-import { HiOutlineCog6Tooth, HiOutlineEllipsisVertical } from 'react-icons/hi2';
+import {
+  HiOutlineCodeBracket,
+  HiOutlineCog6Tooth,
+  HiOutlineEllipsisVertical,
+} from 'react-icons/hi2';
 import Link from 'next/link';
 
 import Badge from '../../components/ui/badge';
@@ -31,7 +35,9 @@ const ProjectItem = ({ project }: PageItemType) => {
         className='relative w-full flex items-start gap-4 bg-background-1 p-4 rounded-lg shadow-sm border border-border-1'
       >
         <Avatar className='rounded-md'>
-          <AvatarFallback className='bg-special rounded-md' />
+          <AvatarFallback className='bg-background-2 border border-border-1 rounded-md text-text-2'>
+            <HiOutlineCodeBracket size={24} />
+          </AvatarFallback>
           <AvatarImage src={image} />
         </Avatar>
         <div>
