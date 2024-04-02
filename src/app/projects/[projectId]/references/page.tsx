@@ -1,9 +1,8 @@
-import { HiOutlineMagnifyingGlass, HiOutlinePlus } from 'react-icons/hi2';
+import { HiOutlinePlus } from 'react-icons/hi2';
 
 import ReferenceForm from './reference-form';
 import RefsList from './refs-list';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Id } from '../../../../../convex/_generated/dataModel';
 import {
   Sheet,
@@ -16,19 +15,16 @@ import {
 const ReferencesPage = ({ params }: { params: { projectId: string } }) => {
   return (
     <>
-      <h1 className='w-full text-xl mb-4'>References</h1>
-      <header className='w-full flex items-center justify-between gap-3'>
-        <form className='flex items-center'>
-          <Input
-            placeholder='Search reference'
-            icon={<HiOutlineMagnifyingGlass />}
-          />
-        </form>
+      <header className='w-full flex items-center justify-between mb-6'>
+        <h1 className='w-full text-xl'>References</h1>
         <Sheet>
           <SheetTrigger asChild>
             <Button size='sm'>
-              <HiOutlinePlus className='mr-2' size={16} />
-              Add
+              <HiOutlinePlus
+                className='mr-2'
+                size={16}
+              />
+              Add New
             </Button>
           </SheetTrigger>
           <SheetContent>

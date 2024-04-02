@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { useForm } from 'react-hook-form';
 
+import Error from '@/components/ui/error-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -33,7 +34,7 @@ const ReferenceForm = ({
     register,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(ReferenceSchema),
     defaultValues: isEditMode ? prevData : {},
@@ -42,15 +43,15 @@ const ReferenceForm = ({
   const createReference = useMutation(api.references.createReference);
   const updateReference = useMutation(api.references.updateReference);
 
-  const submit = handleSubmit(data => {
+  const submit = handleSubmit(async data => {
     if (isEditMode) {
-      updateReference({
+      await updateReference({
         referenceData: { ...data },
         projectId: projectId as Id<'projects'>,
         referenceId: prevData._id,
       });
     } else {
-      createReference({
+      await createReference({
         referenceData: { ...data },
         projectId: projectId as Id<'projects'>,
       });
@@ -58,15 +59,18 @@ const ReferenceForm = ({
   });
 
   return (
-    <form className='flex flex-col h-full' onSubmit={submit}>
+    <form
+      className='flex flex-col h-full'
+      onSubmit={submit}
+    >
       <div className='flex-1'>
         <Label htmlFor='name'>Name</Label>
-        <Input id='name' {...register('name')} placeholder='Reference name' />
-        {errors.name ? (
-          <p className='text-text-danger mb-2 text-sm'>
-            {errors?.name?.message as string}
-          </p>
-        ) : null}
+        <Input
+          id='name'
+          {...register('name')}
+          placeholder='Reference name'
+        />
+        <Error error={errors?.name?.message as string} />
 
         <Label htmlFor='type'>Type</Label>
         <Select
@@ -84,11 +88,7 @@ const ReferenceForm = ({
             <SelectItem value='other'>Other</SelectItem>
           </SelectContent>
         </Select>
-        {errors.type ? (
-          <p className='text-text-danger mb-2 text-sm'>
-            {errors?.type?.message as string}
-          </p>
-        ) : null}
+        <Error error={errors?.type?.message as string} />
 
         <Label htmlFor='reference'>Link</Label>
         <Input
@@ -96,14 +96,15 @@ const ReferenceForm = ({
           placeholder='Reference link'
           {...register('reference')}
         />
-        {errors.reference ? (
-          <p className='text-text-danger mb-2 text-sm'>
-            {errors?.reference?.message as string}
-          </p>
-        ) : null}
+        <Error error={errors?.reference?.message as string} />
       </div>
 
-      <Button className='w-full mt-3 mb-8'>
+      <Button
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
+        aria-disabled={isSubmitting}
+        className='w-full mt-3 mb-8'
+      >
         {isEditMode ? 'Edit' : 'Add'}
       </Button>
     </form>
