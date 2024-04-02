@@ -38,7 +38,7 @@ const TaskCard = ({ taskInfo }: { taskInfo: Doc<'tasks'> }) => {
   } = taskInfo;
 
   return (
-    <li className='relative bg-background-1 min-w-[325px] max-w-[410px] mr-3 border border-border-1 rounded-lg shadow-md md:cursor-pointer'>
+    <li className='relative bg-background-2 dark:bg-background-1 min-w-[325px] max-w-[410px] mr-3 border border-border-1 rounded-lg shadow-md md:cursor-pointer'>
       <Sheet>
         <SheetTrigger className='text-start w-full p-3'>
           <>
