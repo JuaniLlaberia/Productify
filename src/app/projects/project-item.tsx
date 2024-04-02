@@ -11,6 +11,7 @@ import {
 } from '../../components/ui/dropdown-menu';
 import { Doc } from '../../../convex/_generated/dataModel';
 import { formatDateDistance } from '@/utils/formatDate';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export type ExtendedDoc = Doc<'projects'> & {
   role: 'owner' | 'admin' | 'member';
@@ -21,7 +22,7 @@ type PageItemType = {
 };
 
 const ProjectItem = ({ project }: PageItemType) => {
-  const { _id, updatedAt, name, status, role } = project;
+  const { _id, updatedAt, name, status, role, image } = project;
 
   return (
     <li>
@@ -29,7 +30,10 @@ const ProjectItem = ({ project }: PageItemType) => {
         href={`/projects/${_id}/dashboard`}
         className='relative w-full flex items-start gap-4 bg-background-1 p-4 rounded-lg shadow-sm border border-border-1'
       >
-        <div className='size-12 bg-special rounded-md'></div>
+        <Avatar className='rounded-md'>
+          <AvatarFallback className='bg-special rounded-md' />
+          <AvatarImage src={image} />
+        </Avatar>
         <div>
           <h2 className='font-semibold text-text-1'>{name}</h2>
           <div className='flex items-center mt-1.5 mb-3'>
@@ -50,7 +54,7 @@ const ProjectItem = ({ project }: PageItemType) => {
             />
           </div>
           <p className='text-text-2 text-sm'>
-            Last updated {formatDateDistance(new Date(updatedAt))}
+            Last updated {formatDateDistance(new Date(updatedAt || 0))}
           </p>
         </div>
         <DropdownMenu>

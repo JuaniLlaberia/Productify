@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { useRouter } from 'next/navigation';
 
+import Error from '@/components/ui/error-form';
 import { Input } from '../../components/ui/input';
 import { api } from '../../../convex/_generated/api';
 import { Label } from '../../components/ui/label';
@@ -15,7 +16,7 @@ const NewProjectForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(ProjectFormSchema),
   });
@@ -30,19 +31,25 @@ const NewProjectForm = () => {
   });
 
   return (
-    <form onSubmit={submit} className='w-full mt-8'>
+    <form
+      onSubmit={submit}
+      className='w-full mt-8 max-w-[500px]'
+    >
       <Label>Project name</Label>
       <Input
         type='text'
         placeholder='Your project name'
         {...register('name')}
       />
-      {errors.name && (
-        <p className='text-text-danger text-sm'>
-          {errors.name?.message as string}
-        </p>
-      )}
-      <Button className='w-full mt-5'>Create project</Button>
+      <Error error={errors.name?.message as string} />
+
+      <Button
+        className='w-full mt-5'
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
+      >
+        Create project
+      </Button>
     </form>
   );
 };
