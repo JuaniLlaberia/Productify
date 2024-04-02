@@ -28,7 +28,6 @@ import { api } from '../../../../../convex/_generated/api';
 import { Doc, Id } from '../../../../../convex/_generated/dataModel';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import ReportsForm from './reports-form';
-import { report } from 'process';
 
 type BugMenuType = {
   reportData: Doc<'reports'>;
@@ -45,7 +44,10 @@ const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
       <Sheet>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='sm'>
+            <Button
+              variant='ghost'
+              size='sm'
+            >
               <HiOutlineEllipsisVertical size={20} />
             </Button>
           </DropdownMenuTrigger>
@@ -55,12 +57,15 @@ const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
               <span>Make task</span>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <SheetTrigger>
+              <SheetTrigger className='w-full'>
                 <HiOutlinePencil className='mr-2 h-4 w-4' />
                 <span>Edit report</span>
               </SheetTrigger>
             </DropdownMenuItem>
-            <DropdownMenuItem className='text-text-danger' asChild>
+            <DropdownMenuItem
+              className='text-text-danger'
+              asChild
+            >
               <AlertDialogTrigger className='w-full'>
                 <>
                   <HiOutlineTrash className='mr-2 h-4 w-4' />
@@ -71,7 +76,11 @@ const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
           </DropdownMenuContent>
         </DropdownMenu>
         <SheetContent>
-          <ReportsForm editMode prevData={reportData} projectId={projectId} />
+          <ReportsForm
+            editMode
+            prevData={reportData}
+            projectId={projectId}
+          />
         </SheetContent>
       </Sheet>
       <AlertDialogContent>
@@ -84,7 +93,10 @@ const BugsItemMenu = ({ projectId, reportId, reportData }: BugMenuType) => {
         </AlertDialogDescription>
         <AlertDialogFooter className='flex flex-row justify-between'>
           <AlertDialogCancel asChild>
-            <Button variant='ghost' size='sm'>
+            <Button
+              variant='ghost'
+              size='sm'
+            >
               Cancel
             </Button>
           </AlertDialogCancel>

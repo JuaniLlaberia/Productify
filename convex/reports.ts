@@ -30,9 +30,11 @@ export const createReport = mutation({
       name: v.string(),
       description: v.string(),
       importance: v.union(
-        v.literal('urgent'),
-        v.literal('important'),
-        v.literal('moderate')
+        v.literal('p-0'),
+        v.literal('p-1'),
+        v.literal('p-2'),
+        v.literal('p-3'),
+        v.literal('p-4')
       ),
       type: v.union(
         v.literal('ui/ux'),
@@ -62,9 +64,11 @@ export const updateReport = mutation({
       name: v.string(),
       description: v.string(),
       importance: v.union(
-        v.literal('urgent'),
-        v.literal('important'),
-        v.literal('moderate')
+        v.literal('p-0'),
+        v.literal('p-1'),
+        v.literal('p-2'),
+        v.literal('p-3'),
+        v.literal('p-4')
       ),
       type: v.union(
         v.literal('ui/ux'),
@@ -97,7 +101,7 @@ export const reportToTask = mutation({
       title: report?.name || 'Untitled',
       status: 'pending',
       description: report?.description || '',
-      importance: report?.importance || 'important',
+      importance: report?.importance || 'p-2',
       tag: 'fix',
       assignedTo: hasAccess._id,
       projectId: args.projectId,

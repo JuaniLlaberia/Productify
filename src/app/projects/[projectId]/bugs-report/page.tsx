@@ -20,8 +20,11 @@ const BugsReportPage = ({ params }: { params: { projectId: string } }) => {
         <Sheet>
           <SheetTrigger asChild>
             <Button size='sm'>
-              <HiOutlinePlus className='mr-2' size={16} />
-              Add
+              <HiOutlinePlus
+                className='mr-2'
+                size={16}
+              />
+              Add New
             </Button>
           </SheetTrigger>
           <SheetContent>
