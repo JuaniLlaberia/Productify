@@ -2,6 +2,7 @@
 
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from 'react-icons/hi2';
 import { usePaginatedQuery } from 'convex/react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 import Badge from '@/components/ui/badge';
 import { api } from '../../../../../convex/_generated/api';
@@ -19,20 +20,89 @@ import { Button } from '@/components/ui/button';
 
 import BugsItemMenu from './bugs-item-menu';
 import { priorityColor } from '../tasks/task-card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Loader2 } from 'lucide-react';
 
 type BugsTableType = {
   projectId: Id<'projects'>;
 };
 
 const BugsTable = ({ projectId }: BugsTableType) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const typeParam = searchParams.get('type') || 'all';
+  const priorityParam = searchParams.get('priority') || 'all';
+
   const { results, loadMore, status } = usePaginatedQuery(
     api.reports.getReports,
-    { projectId },
+    { projectId, filters: { type: typeParam, priority: priorityParam } },
     { initialNumItems: 5 }
   );
 
+  const onSelectValue = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (name === 'all') {
+      params.delete(name);
+    } else {
+      params.set(name, value);
+    }
+
+    const search = params.toString();
+    const query = search ? `?${search}` : '';
+
+    router.push(`${pathname}${query}`);
+  };
+
   return (
     <>
+      <div className='w-full mb-4 md:flex md:gap-2 md:justify-end'>
+        <Select
+          defaultValue={typeParam}
+          onValueChange={val => {
+            onSelectValue('type', val);
+          }}
+        >
+          <SelectTrigger className='w-full md:w-48'>
+            <SelectValue placeholder='By Type' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>All Types</SelectItem>
+            <SelectItem value='ui/ux'>UI/UX</SelectItem>
+            <SelectItem value='functional'>Functional</SelectItem>
+            <SelectItem value='performance'>Performance</SelectItem>
+            <SelectItem value='security'>Security</SelectItem>
+            <SelectItem value='other'>Other</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          defaultValue={priorityParam}
+          onValueChange={val => {
+            onSelectValue('priority', val);
+          }}
+        >
+          <SelectTrigger className='w-full md:w-48'>
+            <SelectValue placeholder='By Priority' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>All Priorities</SelectItem>
+            <SelectItem value='p-0'>P-0 (Critical)</SelectItem>
+            <SelectItem value='p-1'>P-1 (High)</SelectItem>
+            <SelectItem value='p-2'>P-2 (Medium)</SelectItem>
+            <SelectItem value='p-3'>P-3 (Low)</SelectItem>
+            <SelectItem value='p-4'>P-4 (Minimal)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Table className='border border-border-1'>
         <TableHeader>
           <TableRow>
@@ -82,7 +152,13 @@ const BugsTable = ({ projectId }: BugsTableType) => {
               colSpan={10}
               className='h-24 text-center text-text-2'
             >
-              No results.
+              {status === 'LoadingFirstPage' ? (
+                <div className='flex items-center justify-center'>
+                  <Loader2 className='animate-spin mr-2' />
+                </div>
+              ) : (
+                'No results'
+              )}
             </TableCell>
           </TableRow>
         )}

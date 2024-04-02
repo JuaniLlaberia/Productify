@@ -3,10 +3,15 @@ import { paginationOptsValidator } from 'convex/server';
 
 import { mutation, query } from './_generated/server';
 import { accessToProject } from './projects';
+import { Reports } from './schema';
 
 export const getReports = query({
   args: {
     projectId: v.id('projects'),
+    filters: v.object({
+      type: v.optional(v.string()),
+      priority: v.optional(v.string()),
+    }),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
@@ -14,43 +19,32 @@ export const getReports = query({
     if (!hasAccess)
       throw new ConvexError('You do not have access to this data');
 
-    const reports = await ctx.db
+    let query = ctx.db
       .query('reports')
-      .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
-      .paginate(args.paginationOpts);
+      .withIndex('by_projectId', q => q.eq('projectId', args.projectId));
+
+    if (args.filters.type !== 'all')
+      query = query.filter(q => q.eq(q.field('type'), args.filters.type));
+
+    if (args.filters.priority !== 'all')
+      query = query.filter(q =>
+        q.eq(q.field('importance'), args.filters.priority)
+      );
+
+    const reports = await query.paginate(args.paginationOpts);
 
     return reports;
   },
 });
 
 export const createReport = mutation({
-  args: {
-    projectId: v.id('projects'),
-    reportData: v.object({
-      name: v.string(),
-      description: v.string(),
-      importance: v.union(
-        v.literal('p-0'),
-        v.literal('p-1'),
-        v.literal('p-2'),
-        v.literal('p-3'),
-        v.literal('p-4')
-      ),
-      type: v.union(
-        v.literal('ui/ux'),
-        v.literal('functional'),
-        v.literal('performance'),
-        v.literal('security'),
-        v.literal('other')
-      ),
-    }),
-  },
+  args: Reports.withoutSystemFields,
   handler: async (ctx, args) => {
     const hasAccess = await accessToProject(ctx, args.projectId);
     if (!hasAccess) throw new ConvexError('You can not do this action');
 
     await ctx.db.insert('reports', {
-      ...args.reportData,
+      ...args,
       projectId: args.projectId,
     });
   },
@@ -60,23 +54,8 @@ export const updateReport = mutation({
   args: {
     projectId: v.id('projects'),
     reportData: v.object({
+      ...Reports.withoutSystemFields,
       _id: v.id('reports'),
-      name: v.string(),
-      description: v.string(),
-      importance: v.union(
-        v.literal('p-0'),
-        v.literal('p-1'),
-        v.literal('p-2'),
-        v.literal('p-3'),
-        v.literal('p-4')
-      ),
-      type: v.union(
-        v.literal('ui/ux'),
-        v.literal('functional'),
-        v.literal('performance'),
-        v.literal('security'),
-        v.literal('other')
-      ),
     }),
   },
   handler: async (ctx, args) => {
