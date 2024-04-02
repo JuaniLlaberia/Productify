@@ -1,10 +1,9 @@
 'use client';
 
 import { usePaginatedQuery } from 'convex/react';
-import { Fragment } from 'react';
-import { ClipLoader } from 'react-spinners';
-import { useTheme } from 'next-themes';
+import { Fragment, useEffect, useRef } from 'react';
 import { HiOutlineEnvelope } from 'react-icons/hi2';
+import { Loader2 } from 'lucide-react';
 
 import Message from './message';
 import MessageLoader from './message-loader';
@@ -14,7 +13,6 @@ import { groupConsecutiveMessages } from './groupConsecutiveMesages';
 import { Button } from '@/components/ui/button';
 
 const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
-  const { theme } = useTheme();
   const { results, loadMore, status } = usePaginatedQuery(
     api.messages.getMessages,
     { projectId },
@@ -22,6 +20,14 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
       initialNumItems: 30,
     }
   );
+
+  //Scroll reference
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (status === 'LoadingFirstPage') return;
+    bottomRef?.current?.scrollIntoView();
+  }, [status]);
 
   if (status === 'LoadingFirstPage')
     return (
@@ -47,11 +53,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
             Load previous
           </Button>
         ) : status === 'LoadingMore' ? (
-          <ClipLoader
-            color={theme === 'light' ? '#1f1c1c' : '#fffafa81'}
-            size={25}
-            className='mr-3'
-          />
+          <Loader2 className='animate-spin mr-2' />
         ) : null}
       </div>
       {results.length > 0 ? (
@@ -80,6 +82,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
           </p>
         </div>
       )}
+      <div ref={bottomRef}></div>
     </ul>
   );
 };
