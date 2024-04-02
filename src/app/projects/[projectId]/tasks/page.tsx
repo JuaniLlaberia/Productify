@@ -15,7 +15,7 @@ import { Id } from '../../../../../convex/_generated/dataModel';
 export const TasksPage = async ({
   params,
 }: {
-  params: { projectId: string };
+  params: { projectId: Id<'projects'> };
 }) => {
   return (
     <>
@@ -38,11 +38,11 @@ export const TasksPage = async ({
             <SheetHeader>
               <SheetTitle>New Task</SheetTitle>
             </SheetHeader>
-            <TaskForm projectId={params.projectId as Id<'projects'>} />
+            <TaskForm projectId={params.projectId} />
           </SheetContent>
         </Sheet>
       </header>
-      <TasksBoard projectId={params.projectId as Id<'projects'>} />
+      <TasksBoard projectId={params.projectId} />
     </>
   );
 };

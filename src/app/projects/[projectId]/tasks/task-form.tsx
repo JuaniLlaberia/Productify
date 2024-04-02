@@ -54,9 +54,9 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
 
   const submit = handleSubmit(async data => {
     if (editMode) {
-      await updateTask({ taskData: { ...data, _id: prevData._id, projectId } });
+      await updateTask({ ...data, _id: prevData._id, projectId });
     } else {
-      await createTask({ taskData: { ...data, projectId } });
+      await createTask({ ...data, projectId });
     }
   });
 
@@ -133,7 +133,7 @@ const TaskForm = ({ projectId, prevData, editMode = false }: TaskFormType) => {
             {members?.map(member => (
               <SelectItem
                 key={member._id}
-                value={member._id!}
+                value={member._id}
               >
                 <div className='flex items-center gap-2'>
                   <Avatar className='size-7'>

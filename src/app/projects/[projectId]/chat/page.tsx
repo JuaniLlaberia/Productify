@@ -2,11 +2,11 @@ import Conversation from './conversation';
 import ChatInput from './custom-chat-input';
 import { Id } from '../../../../../convex/_generated/dataModel';
 
-const ChatPage = ({ params }: { params: { projectId: string } }) => {
+const ChatPage = ({ params }: { params: { projectId: Id<'projects'> } }) => {
   return (
     <>
-      <Conversation projectId={params.projectId as Id<'projects'>} />
-      <ChatInput projectId={params.projectId as Id<'projects'>} />
+      <Conversation projectId={params.projectId} />
+      <ChatInput projectId={params.projectId} />
     </>
   );
 };

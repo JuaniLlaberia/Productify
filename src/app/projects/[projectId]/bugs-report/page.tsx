@@ -12,7 +12,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 
-const BugsReportPage = ({ params }: { params: { projectId: string } }) => {
+const BugsReportPage = ({
+  params,
+}: {
+  params: { projectId: Id<'projects'> };
+}) => {
   return (
     <>
       <header className='w-full flex items-center justify-between mb-6'>
@@ -31,11 +35,11 @@ const BugsReportPage = ({ params }: { params: { projectId: string } }) => {
             <SheetHeader>
               <SheetTitle>New Bug Report</SheetTitle>
             </SheetHeader>
-            <ReportsForm projectId={params.projectId as Id<'projects'>} />
+            <ReportsForm projectId={params.projectId} />
           </SheetContent>
         </Sheet>
       </header>
-      <BugsTable projectId={params.projectId as Id<'projects'>} />
+      <BugsTable projectId={params.projectId} />
     </>
   );
 };

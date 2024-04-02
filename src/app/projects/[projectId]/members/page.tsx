@@ -1,11 +1,15 @@
 import MembersTable from './members-table';
+import InviteMembers from './invite-members';
 import { Id } from '../../../../../convex/_generated/dataModel';
 
-const MembersPage = ({ params }: { params: { projectId: string } }) => {
+const MembersPage = ({ params }: { params: { projectId: Id<'projects'> } }) => {
   return (
     <>
-      <h1 className='text-xl w-full mb-4 lg:mb-8'>Members</h1>
-      <MembersTable projectId={params.projectId as Id<'projects'>} />
+      <header className='w-full flex items-center justify-between mb-4 lg:mb-8'>
+        <h1 className='text-xl w-full'>Members</h1>
+        <InviteMembers projectId={params.projectId} />
+      </header>
+      <MembersTable projectId={params.projectId} />
     </>
   );
 };

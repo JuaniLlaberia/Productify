@@ -12,10 +12,14 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 
-const ReferencesPage = ({ params }: { params: { projectId: string } }) => {
+const ReferencesPage = ({
+  params,
+}: {
+  params: { projectId: Id<'projects'> };
+}) => {
   return (
     <>
-      <header className='w-full flex items-center justify-between mb-6'>
+      <header className='w-full flex items-center justify-between mb-2'>
         <h1 className='w-full text-xl'>References</h1>
         <Sheet>
           <SheetTrigger asChild>
@@ -31,7 +35,7 @@ const ReferencesPage = ({ params }: { params: { projectId: string } }) => {
             <SheetHeader>
               <SheetTitle>New Reference</SheetTitle>
             </SheetHeader>
-            <ReferenceForm projectId={params.projectId as Id<'projects'>} />
+            <ReferenceForm projectId={params.projectId} />
           </SheetContent>
         </Sheet>
       </header>

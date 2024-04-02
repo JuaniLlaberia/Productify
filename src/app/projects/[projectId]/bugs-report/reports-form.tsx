@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { HiOutlineCalendarDays, HiOutlineTag } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
 
+import Error from '@/components/ui/error-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +20,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { reportsSchema } from '@/lib/schemas';
 import { api } from '../../../../../convex/_generated/api';
 import { Doc, Id } from '../../../../../convex/_generated/dataModel';
-import Error from '@/components/ui/error-form';
 
 type ReportsFormType = {
   projectId: Id<'projects'>;
@@ -45,14 +45,14 @@ const ReportsForm = ({
   const createBugReport = useMutation(api.reports.createReport);
   const updateBugReport = useMutation(api.reports.updateReport);
 
-  const submit = handleSubmit(async data => {
+  const submit = handleSubmit(async (data: any) => {
     if (editMode) {
       await updateBugReport({
+        ...data,
         projectId,
-        reportData: { ...data, _id: prevData?._id! },
       });
     } else {
-      await createBugReport({ projectId, reportData: { ...data } });
+      await createBugReport({ ...data, projectId });
     }
   });
 
