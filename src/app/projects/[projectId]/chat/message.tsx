@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { HiOutlineTrash } from 'react-icons/hi2';
+import { HiOutlineEllipsisHorizontal } from 'react-icons/hi2';
 import { useMutation } from 'convex/react';
 
 import { formatDate, formatDateDistance } from '@/utils/formatDate';
@@ -36,8 +36,8 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
   return (
     <li
       id={messageId}
-      className={`relative group flex items-start gap-4 ${
-        !isFirstInGroup ? 'mt-0 hover:rounded-md transition-all' : 'mt-3 '
+      className={`relative group flex items-start gap-4 hover:rounded-md  hover:bg-background-hover-1 transition-all ${
+        !isFirstInGroup ? 'mt-0' : 'mt-3'
       }`}
     >
       {isFirstInGroup ? (
@@ -75,7 +75,10 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
           } max-w-[75dvw] break-words overflow-hidden xl:text-lg`}
         >
           {image ? (
-            <Link href={image} target='_blank'>
+            <Link
+              href={image}
+              target='_blank'
+            >
               <Image
                 className='mt-3 rounded-md'
                 alt='image sent in message'
@@ -90,8 +93,8 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
       </div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className='hidden group-hover:block absolute right-5 top-1 text-text-2 hover:text-text-danger'>
-            <HiOutlineTrash />
+          <button className='hidden group-hover:block absolute right-5 top-1 text-text-2 hover:text-text-1'>
+            <HiOutlineEllipsisHorizontal size={24} />
           </button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -103,7 +106,10 @@ const Message = ({ messageData, senderData, isFirstInGroup }: MessageType) => {
           </AlertDialogHeader>
           <AlertDialogFooter className='flex flex-row justify-between'>
             <AlertDialogCancel asChild>
-              <Button variant='ghost' size='sm'>
+              <Button
+                variant='ghost'
+                size='sm'
+              >
                 Cancel
               </Button>
             </AlertDialogCancel>
