@@ -95,7 +95,7 @@ const InvitationItem = ({
               try {
                 setIsLoading(true);
                 const projectId = await joinProject({ invitationId });
-                router.push(`/projects/${projectId}/dashboard`);
+                router.push(`/projects/${projectId}/tasks`);
                 toast.success('You have joined successfully');
               } catch (err) {
                 toast.error('Failed to join project');

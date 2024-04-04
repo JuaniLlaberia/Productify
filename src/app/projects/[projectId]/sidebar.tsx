@@ -7,7 +7,6 @@ import {
   HiOutlineExclamationTriangle,
   HiOutlineLink,
   HiOutlineListBullet,
-  HiOutlineSquares2X2,
   HiOutlineUsers,
 } from 'react-icons/hi2';
 import { useState } from 'react';
@@ -21,11 +20,6 @@ import { Id } from '../../../../convex/_generated/dataModel';
 import { useParams } from 'next/navigation';
 
 const links = [
-  {
-    link: 'dashboard',
-    icon: <HiOutlineSquares2X2 />,
-    text: 'Dashboard',
-  },
   {
     link: 'tasks',
     icon: <HiOutlineListBullet />,

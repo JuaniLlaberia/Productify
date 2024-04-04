@@ -29,7 +29,7 @@ const NewProjectForm = () => {
     try {
       const projectId = await createProject({ name: data.name });
 
-      router.push(`/projects/${projectId}/dashboard`);
+      router.push(`/projects/${projectId}/tasks`);
       toast.success('Project created successfully');
     } catch (err) {
       toast.error('Failed to craete new project');
