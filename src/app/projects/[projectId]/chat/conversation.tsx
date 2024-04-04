@@ -1,6 +1,6 @@
 'use client';
 
-import { usePaginatedQuery } from 'convex/react';
+import { useMutation, usePaginatedQuery } from 'convex/react';
 import { Fragment, useEffect, useRef } from 'react';
 import { HiOutlineEnvelope } from 'react-icons/hi2';
 import { Loader2 } from 'lucide-react';
@@ -21,8 +21,15 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
     }
   );
 
+  const markAsRead = useMutation(api.projects.updateMemberRead);
+
   //Scroll reference
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const markMsgsAsRead = async () => await markAsRead({ projectId });
+    markMsgsAsRead();
+  }, []);
 
   useEffect(() => {
     if (status === 'LoadingFirstPage') return;

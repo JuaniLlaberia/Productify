@@ -80,6 +80,7 @@ export const acceptInvitation = mutation({
       projectId: invitation.projectId,
       userId: invitation.userId,
       role: 'member',
+      lastChatRead: Date.now(),
     });
 
     await ctx.db.delete(invitation._id);

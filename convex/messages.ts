@@ -65,8 +65,31 @@ export const deleteMessage = mutation({
 
     if (!hasAccess) throw new ConvexError('You can not perform this action');
 
-    //If message contains image => delete image from bucket
-
     await ctx.db.delete(args.messageId);
+  },
+});
+
+export const hasUnreadMsgs = query({
+  args: { projectId: v.id('projects') },
+  handler: async (ctx, args) => {
+    const hasAccess = await accessToProject(ctx, args.projectId);
+
+    if (!hasAccess) return false;
+
+    const member = await ctx.db
+      .query('project_members')
+      .withIndex('by_userId', q => q.eq('userId', hasAccess._id))
+      .first();
+
+    const lastProjectMsg = await ctx.db
+      .query('messages')
+      .withIndex('by_projectId', q => q.eq('projectId', args.projectId))
+      .order('desc')
+      .first();
+
+    return lastProjectMsg === null || lastProjectMsg.sendBy === member?.userId
+      ? false
+      : member &&
+          member.lastChatRead < Math.floor(lastProjectMsg._creationTime);
   },
 });

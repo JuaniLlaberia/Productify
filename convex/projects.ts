@@ -124,6 +124,7 @@ export const createProject = mutation({
       projectId,
       userId: user._id,
       role: 'owner',
+      lastChatRead: Date.now(),
     });
 
     return projectId;
@@ -307,5 +308,25 @@ export const removeMember = mutation({
       throw new ConvexError('This user is not a member of this project');
 
     await ctx.db.delete(userMember?._id);
+  },
+});
+
+export const updateMemberRead = mutation({
+  args: { projectId: v.id('projects') },
+  handler: async (ctx, args) => {
+    const access = await accessToProject(ctx, args.projectId);
+
+    if (!access) throw new ConvexError('You can not perform this action');
+
+    const member = await ctx.db
+      .query('project_members')
+      .withIndex('by_projectId_and_userId', q =>
+        q.eq('projectId', args.projectId).eq('userId', access._id)
+      )
+      .first();
+
+    if (!member) throw new ConvexError('User does not exist');
+
+    await ctx.db.patch(member?._id, { lastChatRead: Date.now() });
   },
 });

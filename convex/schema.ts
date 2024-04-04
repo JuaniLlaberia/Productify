@@ -75,6 +75,7 @@ export const ProjectMembers = Table('project_members', {
   projectId: v.id('projects'),
   userId: v.id('users'),
   role: v.union(v.literal('owner'), v.literal('admin'), v.literal('member')),
+  lastChatRead: v.number(),
 });
 
 export const Reports = Table('reports', {

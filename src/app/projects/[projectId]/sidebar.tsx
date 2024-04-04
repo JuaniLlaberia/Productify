@@ -15,6 +15,10 @@ import { useState } from 'react';
 import SidebarFooter from './sidebar-footer';
 import NavLink from '../../../components/nav-link';
 import { Button } from '@/components/ui/button';
+import { useQuery } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
+import { Id } from '../../../../convex/_generated/dataModel';
+import { useParams } from 'next/navigation';
 
 const links = [
   {
@@ -55,7 +59,12 @@ const links = [
 ];
 
 const Sidebar = () => {
+  const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
+
+  const hasMsg = useQuery(api.messages.hasUnreadMsgs, {
+    projectId: params.projectId as Id<'projects'>,
+  });
 
   return (
     <>
@@ -81,6 +90,7 @@ const Sidebar = () => {
                   key={link.link}
                   to={link.link}
                   icon={link.icon}
+                  hasNotification={Boolean(hasMsg) && link.text === 'Chat'}
                 >
                   {link.text}
                 </NavLink>
