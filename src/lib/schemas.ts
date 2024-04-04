@@ -34,3 +34,7 @@ export const reportsSchema = z.object({
   importance: z.enum(['p-0', 'p-1', 'p-2', 'p-3', 'p-4']),
   description: z.string().min(1, 'Missing bug report description'),
 });
+
+export const InvitationSchema = z.object({
+  email: z.string().email('Please provide a valid email'),
+});
