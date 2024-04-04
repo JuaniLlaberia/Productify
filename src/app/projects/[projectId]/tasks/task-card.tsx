@@ -43,7 +43,9 @@ const TaskCard = ({ taskInfo }: { taskInfo: Doc<'tasks'> }) => {
         <SheetTrigger className='text-start w-full p-3'>
           <>
             <h3 className='text-text-1'>{title}</h3>
-            <p className='text-text-2 text-sm mt-1.5'>{description}</p>
+            <p className='text-text-2 text-sm mt-1.5 line-clamp-3'>
+              {description}
+            </p>
             <div className='flex mt-6 px-2'>
               <Badge
                 text={tag}

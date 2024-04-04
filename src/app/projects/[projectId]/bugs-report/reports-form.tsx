@@ -50,8 +50,8 @@ const ReportsForm = ({
     try {
       if (editMode) {
         await updateBugReport({
-          ...data,
           projectId,
+          reportData: { ...data, _id: prevData?._id, projectId },
         });
       } else {
         await createBugReport({ ...data, projectId });

@@ -31,7 +31,7 @@ const ProjectItem = ({ project }: PageItemType) => {
   return (
     <li>
       <Link
-        href={`/projects/${_id}/dashboard`}
+        href={`/projects/${_id}/tasks`}
         className='relative w-full flex items-start gap-4 bg-background-1 p-4 rounded-lg shadow-sm border border-border-1'
       >
         <Avatar className='rounded-md'>
