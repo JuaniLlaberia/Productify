@@ -18,7 +18,7 @@ const ProjectsPage = async () => {
   return (
     <main className='px-2'>
       <NavbarProjects />
-      <header className='flex items-center justify-between p-2 px-3 lg:px-24 my-3'>
+      <header className='flex items-center justify-between p-2 px-3 lg:px-32 my-3'>
         <h1 className='text-2xl text-text-1 font-semibold'>Projects</h1>
         <Link
           href='/projects/new'

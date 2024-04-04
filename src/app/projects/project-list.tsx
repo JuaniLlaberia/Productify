@@ -12,7 +12,7 @@ const ProjectsList = (props: {
   const projects = usePreloadedQuery(props.preloadedProjects);
 
   return (
-    <section className='lg:px-24'>
+    <section className='lg:px-32'>
       {projects.length > 0 ? (
         <ul className='flex flex-col gap-2 w-full mt-3 lg:grid lg:grid-cols-3 lg:gap-4'>
           {projects.map(project => (

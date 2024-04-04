@@ -54,7 +54,7 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
   const isOwner = userRole === 'owner';
 
   return (
-    <ul className='flex flex-col gap-4'>
+    <ul className='w-full flex flex-col gap-4'>
       {userRole !== 'member' ? (
         <>
           <SettingsCard
