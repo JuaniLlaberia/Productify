@@ -40,8 +40,7 @@ const InviteMembers = ({ projectId }: { projectId: Id<'projects'> }) => {
       toast.success('Invitation sent successfully');
       reset();
     } catch (err) {
-      console.log(err);
-      toast.error('Failed to send invitation');
+      toast.error(err.data);
     }
   });
 
