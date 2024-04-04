@@ -91,10 +91,9 @@ export const Reports = Table('reports', {
   importance: importanceSchema,
 });
 
-export const Notifications = Table('notifications', {
+export const Invitations = Table('invitations', {
   userId: v.id('users'),
   projectId: v.id('projects'),
-  type: v.union(v.literal('invitation'), v.literal('task')),
 });
 
 export default defineSchema({
@@ -115,5 +114,5 @@ export default defineSchema({
     .index('by_projectId', ['projectId'])
     .index('by_userId', ['userId']),
   reports: Reports.table.index('by_projectId', ['projectId']),
-  notifications: Notifications.table.index('by_user', ['userId']),
+  invitations: Invitations.table.index('by_user', ['userId']),
 });
