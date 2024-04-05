@@ -69,7 +69,7 @@ const InvitationItem = ({
         </DialogHeader>
         <DialogDescription className='text-text-2'>
           You have been invited to be a member of{' '}
-          <span className='text-text-1 font-medium'>"{projectName}"</span>. This
+          <span className='text-text-1 font-medium'>{projectName}</span>. This
           invitation expires after 24h. Join or reject the invitation below.
         </DialogDescription>
         <div className='flex justify-between items-center mt-3'>

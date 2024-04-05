@@ -22,7 +22,7 @@ const SettingsCard = ({
       }`}
     >
       <div className='p-4'>
-        <h3 className='text-text-1 text-lg font-semibold'>{title}</h3>
+        <h1 className='text-text-1 text-lg font-semibold'>{title}</h1>
         <p className='text-text-2 text-sm mb-5'>{description}</p>
         <>{formChild}</>
       </div>

@@ -29,7 +29,7 @@ const Conversation = ({ projectId }: { projectId: Id<'projects'> }) => {
   useEffect(() => {
     const markMsgsAsRead = async () => await markAsRead({ projectId });
     markMsgsAsRead();
-  }, []);
+  }, [markAsRead, projectId]);
 
   useEffect(() => {
     if (status === 'LoadingFirstPage') return;

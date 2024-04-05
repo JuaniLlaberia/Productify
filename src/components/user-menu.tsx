@@ -40,7 +40,10 @@ const UserMenu = ({ withText = true }: UserMenuType) => {
     <DropdownMenu>
       <DropdownMenuTrigger className='flex items-center gap-2.5 hover:bg-background-hover-2 p-1 rounded-lg transition-colors'>
         <Avatar className={`${!withText ? 'size-8' : ''}`}>
-          <AvatarImage src={userData?.profileImg} />
+          <AvatarImage
+            alt='user photo'
+            src={userData?.profileImg}
+          />
           <AvatarFallback>{userData?.name.at(0)}</AvatarFallback>
         </Avatar>
         {withText && (

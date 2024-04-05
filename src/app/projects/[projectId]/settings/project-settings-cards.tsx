@@ -132,7 +132,7 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
           <SettingsCard
             title='Avatar'
             description='Upload a custom image or emoji from your files.'
-            footerComment={`It's recommended to have one.`}
+            footerComment='It is recommended to have one.'
             formChild={
               <form>
                 <Label
@@ -140,7 +140,10 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
                   className='flex px-3 items-center gap-4 cursor-pointer hover:underline'
                 >
                   <Avatar className='size-14 rounded-md'>
-                    <AvatarImage src={projectData?.image} />
+                    <AvatarImage
+                      alt='user photo'
+                      src={projectData?.image}
+                    />
                     <AvatarFallback className='bg-background-2 border border-border-1 rounded-md text-text-2'>
                       <HiOutlineCodeBracket size={24} />
                     </AvatarFallback>
@@ -202,7 +205,7 @@ const ProjectSettingsCards = ({ projectId }: ProjectSettingsCardsType) => {
                   <AlertDialogHeader className='text-start'>
                     <AlertDialogTitle>Delete Project</AlertDialogTitle>
                     <AlertDialogDescription className='text-text-2'>
-                      This will permanently remove this project and all of it's
+                      This will permanently remove this project and all of it is
                       information.
                       <span className='text-text-1 font-semibold'>
                         This action is not reversible.

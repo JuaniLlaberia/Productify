@@ -26,6 +26,7 @@ const InvitationsMenu = () => {
           className='flex items-center justify-start gap-2 text-text-2 hover:text-text-1 px-2'
           variant='ghost'
           size='sm'
+          aria-label='invitations menu'
         >
           <span className='text-2xl relative'>
             <HiOutlineEnvelope />
@@ -50,6 +51,7 @@ const InvitationsMenu = () => {
             <>
               {invitations?.map(invitation => (
                 <InvitationItem
+                  key={invitation.invitationId}
                   projectImg={invitation.projectImg}
                   projectName={invitation.projectName}
                   invitationId={invitation.invitationId}
