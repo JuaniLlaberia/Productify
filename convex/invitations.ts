@@ -44,6 +44,16 @@ export const createInvitation = mutation({
 
     if (!userToInvite) throw new ConvexError('User not found');
 
+    const hasPrevInvitation = await ctx.db
+      .query('invitations')
+      .withIndex('by_userId_projectId', q =>
+        q.eq('projectId', args.projectId).eq('userId', userToInvite._id)
+      )
+      .first();
+
+    if (Boolean(hasPrevInvitation))
+      throw new ConvexError('You have already invited this user');
+
     const isMember = await ctx.db
       .query('project_members')
       .withIndex('by_projectId_and_userId', q =>

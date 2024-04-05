@@ -115,5 +115,7 @@ export default defineSchema({
     .index('by_projectId', ['projectId'])
     .index('by_userId', ['userId']),
   reports: Reports.table.index('by_projectId', ['projectId']),
-  invitations: Invitations.table.index('by_user', ['userId']),
+  invitations: Invitations.table
+    .index('by_user', ['userId'])
+    .index('by_userId_projectId', ['projectId', 'userId']),
 });
