@@ -48,7 +48,7 @@ const ReferenceForm = ({
     try {
       if (isEditMode) {
         await updateReference({
-          referenceData: { ...data },
+          referenceData: { ...data, projectId },
           projectId: projectId as Id<'projects'>,
           referenceId: prevData._id,
         });
@@ -62,6 +62,7 @@ const ReferenceForm = ({
         `Reference ${isEditMode ? 'updated' : 'created'} successfully`
       );
     } catch (err) {
+      console.log(err);
       toast.error(`Failed to ${isEditMode ? 'update' : 'create'} reference`);
     }
   });
