@@ -11,6 +11,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Productify',
+  description:
+    'We are a project management plataform focus in making your team more productive when working together. Create custome task boards to track your progress and comunicate with your team at any time.',
 };
 
 export default function RootLayout({

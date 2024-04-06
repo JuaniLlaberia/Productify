@@ -17,6 +17,7 @@ const InvitationsList = (props: {
         <ul className='px-2'>
           {invitations.map(invitation => (
             <InvitationItem
+              key={invitation.invitationId}
               invitationId={invitation.invitationId}
               projectImg={invitation.projectImg}
               projectName={invitation.projectName}
