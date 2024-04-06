@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import { Id } from '../../../../../convex/_generated/dataModel';
 
-export const TasksPage = async ({
+const TasksPage = async ({
   params,
 }: {
   params: { projectId: Id<'projects'> };
