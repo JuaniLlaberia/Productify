@@ -29,9 +29,15 @@ export const getMessages = query({
         messages.page.map(async msg => {
           const userData = await ctx.db.get(msg.sendBy);
           return {
-            ...msg,
+            _id: msg._id,
+            _creationTime: msg._creationTime,
+            image: msg.image,
+            type: msg.type,
+            projectId: msg.projectId,
+            data: msg.data,
             sendBy: {
-              ...userData,
+              profileImg: userData?.profileImg,
+              name: userData?.name,
             },
           };
         })

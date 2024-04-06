@@ -81,7 +81,11 @@ export const getUserProjects = query({
       userProjects.map(async project => {
         const projectData = await ctx.db.get(project.projectId);
         return {
-          ...projectData,
+          _id: projectData?._id,
+          image: projectData?.image,
+          name: projectData?.name,
+          status: projectData?.status,
+          updatedAt: projectData?.updatedAt,
           role: project.role,
         };
       })
@@ -215,7 +219,10 @@ export const getMembersPaginated = query({
         projectMembers.page.map(async member => {
           const userData = await ctx.db.get(member.userId);
           return {
-            ...userData,
+            _id: userData?._id,
+            profileImg: userData?.profileImg,
+            name: userData?.name,
+            email: userData?.email,
             role: member.role,
           };
         })
@@ -240,7 +247,14 @@ export const getMembers = query({
 
     return await Promise.all(
       projectMembers.map(async member => {
-        return await ctx.db.get(member.userId);
+        const userData = await ctx.db.get(member.userId);
+        return {
+          _id: userData?._id,
+          profileImg: userData?.profileImg,
+          name: userData?.name,
+          email: userData?.email,
+          role: member.role,
+        };
       })
     );
   },

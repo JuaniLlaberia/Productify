@@ -40,6 +40,7 @@ const InviteMembers = ({ projectId }: { projectId: Id<'projects'> }) => {
       toast.success('Invitation sent successfully');
       reset();
     } catch (err) {
+      //@ts-expect-error
       toast.error(err.data);
     }
   });
